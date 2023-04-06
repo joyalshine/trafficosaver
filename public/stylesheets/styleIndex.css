@@ -1,0 +1,165 @@
+/* Optional */
+/* body {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+*{
+  padding: 0;
+  margin: 0;
+}
+
+.container-fluid{
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 5px;
+  background-color:#E5E5E5;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+#SignUpVitLogo{
+  width: 20rem;
+  
+}
+
+
+#SignInLabel{
+  font-family: Arial, Helvetica, sans-serif;
+  color: #224957;
+  
+  /* margin-bottom: 2rem; */
+}
+#ForgotPassword{
+  text-decoration:None;
+  font-size: small;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+#facultyId{
+  background-color: #224957;
+  border-radius: 10px;
+  /*width:18rem;                 ------------------------------------------*/
+  color: #ffffff;
+}
+#LoginPassword{
+  background-color:#224957;
+  border-radius: 10px;
+  /* margin: 15px; */
+  color: #ffffff;
+}
+#LoginButton{
+  position:sticky;
+  background: #20DF7F;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  font-size: large;
+  
+}
+#LoginButton:hover{
+  box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem #2cfc94, .125rem .125rem 1rem #74f4b4;
+  border-color: #20DF7F;
+} 
+
+#facultyId::placeholder{
+  color: #ffffff;
+}
+#LoginPassword::placeholder{
+  color: #ffffff;
+}
+.SignUpDiv{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box{
+  position: relative;
+  margin: 10px;
+}
+.box-1{
+  bottom: 3rem;
+}
+.box-2{
+  bottom: 1rem;
+}
+.box-3{
+  bottom: 1rem;
+  width: 100%;          /*-------------------------------------*/
+}
+.box-3-in{
+  margin:1rem;
+  display: flex;
+  justify-content: space-between;
+}
+/*.box-3-3-3{
+  position: relative;
+  left: 8rem;
+}*/
+.box-3-4{
+  display: flex;
+  justify-content:center;
+}
+.register{
+  text-decoration: none;
+  font-size: 15px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+.message{
+  position: relative;
+  bottom: 20px;
+}
+.SignUpMainDiv{
+  position: sticky;
+}
+.box-3-3-2{
+  position: relative;
+}
+
+
+@media (min-width: 1700px) {
+  input{
+    height: 50px;
+  }
+  #LoginPassword{
+    font-size: 20px;
+  }
+  #facultyId{
+    font-size: 20px;
+  }
+  .box-2{
+    font-size: 22px;
+  }
+  #ForgotPassword{
+    font-size: larger;
+  }
+  .register{
+    font-size: larger;
+  }
+  .box-1{
+    font-size: 46px;
+  }
+  #LoginButton{
+    font-size: x-large;
+  }
+  #SignUpVitLogo {
+    width: 30rem;
+}
+}
+.copyright{
+  width: 100%;
+  background: linear-gradient(130deg, rgba(36, 85, 163, 1) 23%, rgba(52, 151, 219, 1) 52%, rgba(52, 142, 219, 1) 58%, rgba(52, 131, 219, 1) 65%, rgba(40, 116, 166, 1) 74%);
+}
+.text-light {
+  --bs-text-opacity: 1;
+  color: rgba(var(--bs-light-rgb),var(--bs-text-opacity))!important;
+}
+
+

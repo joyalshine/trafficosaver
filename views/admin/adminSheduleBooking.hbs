@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/styleAdminSheduleBooking.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"
+        integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/mc-datepicker/dist/mc-calendar.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.jsdelivr.net/npm/mc-datepicker/dist/mc-calendar.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="overlay" onclick="off()"></div>
+    <header class="text-center" id="preProductionHomeHeader">
+
+        <div class="">
+            <img src="https://vit.ac.in/files/gravitas19/images/vit_white.png" id="preProductionHomeLogo" alt="">
+        </div>
+
+        <div class="topright">
+            <a href="" style="text-decoration: none; color:#fff">
+                <img src="https://cdn-icons-png.flaticon.com/128/3237/3237472.png" width="40" height="40" alt="">
+                {{user.facultyName}}
+            </a>
+        </div>
+
+    </header>
+    <div class="containerMain">
+        <a href="#" class="toggleBox">
+            <span class="icon"></span>
+        </a>
+        <ul class="navItems">
+            <li>
+                <a href="/admin-home">
+                    <i class="fa fa-home" style="--i:1"></i>
+                    <span style="--g:1">home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/course-add-form">
+                    <i class="fa fa-user" style="--i:2"></i>
+                    <span style="--g:2">Add course</span>
+                </a>
+            </li>
+            <li>
+                <a href="/reports-view">
+                    <i class="fa fa-folder" style="--i:3"></i>
+                    <span style="--g:3">reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-password-change">
+                    <i class="fa-solid fa-file-circle-check" style="--i:4"></i>
+                    <span style="--g:4">Database management</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-view">
+                    <i class="fa-solid fa-calendar-days" style="--i:5"></i>
+                    <span style="--g:5">shedule</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-booking">
+                    <i class="fa-solid fa-calendar-days" style="--i:6"></i>
+                    <span style="--g:6">shedule Booking</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fa fa-globe" style="--i:7"></i>
+                    <span style="--g:7">logout</span>
+                </a>
+            </li>
+    </div>
+    <section id="" class="datePickerSection">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-lg-6 p-5 inputSection">
+                    <div class="row mb-2">
+                        <div class="col-md-12 col-lg-8 mt-3">
+                            <select name="" id="studioSelect" class="form-select">
+                                <option value="">Select Studio....</option>
+                                <option value="mainStudio">Main Studio</option>
+                                <option value="virtualStudio">Virtual Studio</option>
+                                <option value="vgbStudio">VGB Studio</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row dateSelector">
+                        <div class="col-md-12 col-lg-8 mt-3">
+                            <a onclick="opendate()"><i class="fa-solid fa-calendar-days icon1"></i></a>
+                            <input id="datepicker" class="input-field" placeholder="Select Date">
+                        </div>
+                        <div class="col-md-6 col-lg-4 mt-3">
+                            <button type="button" class="btn btn-info" onclick="showSlots()">Show Slots</button>
+                        </div>
+                    </div>
+                    <div class=" row mt-5 text-center">
+                        <div class="col-6 col-sm-6 col-md-8 col-lg-7">
+                            <button type="button" class="btn btn-primary" onclick="bookSlot()">Book Slot</button>
+                        </div>
+                        <div class="col-6 col-sm-6 col-md-4 col-lg-5">
+                            <button type="button" class="btn btn-primary" onclick="clearData()">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-5 p-3 hide" id="slotSection">
+                    <div class="text-center" style="padding-left: 2.5em;">
+                        <h3 id="slotHeader"></h3>
+                    </div>
+                    <div class="slotBody text-center p-3" style="">
+                        <ul id="slotDisplay">
+                            <!--<div class="radio-toolbar">
+                                <div class="slotSelectionDiv">
+                                    <input type="radio" id="radioApple" name="radioFruit" value="apple">
+                                    <label for="radioApple"  class="slotSelectionLabel">Apple</label>
+                                </div>
+                                <div class="slotSelectionDiv">
+                                    <input type="radio" id="radioBanana" name="radioFruit" value="banana">
+                                    <label for="radioBanana" class="slotSelectionLabel">Banana</label>
+                                </div>
+                                <div class="slotSelectionDiv">
+                                    <input type="radio" id="radioOrange" name="radioFruit" value="orange">
+                                    <label for="radioOrange" class="slotSelectionLabel">Orange</label>
+                                </div>
+                            </div>
+                            <p>&nbsp;</p>-->
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+        crossorigin="anonymous"></script>
+    <script>
+        var toggleClick = document.querySelector(".toggleBox");
+        var containerMain = document.querySelector(".containerMain");
+        var overlayScreen = document.querySelector(".overlay");
+
+        toggleClick.addEventListener('click', () => {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        })
+
+        function off() {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        }
+
+        const picker = MCDatepicker.create({
+            el: '#datepicker',
+            bodyType: 'modal',
+            autoClose: true,
+            closeOnBlur: false,
+            customOkBTN: 'OK',
+            minDate: new Date(),
+            showCalendarDisplay: true,
+        });
+
+        function opendate() {
+            if (allowDatePick) {
+                picker.open()
+            }
+        }
+
+        let lastClickedTimeSlot = ""
+        let allowDatePick = true
+
+        function timeSlotClicked(key) {
+            lastClickedTimeSlot = key
+        }
+
+        function clearData() {
+            let datePickerElement = document.getElementById("datepicker")
+            let slotDisplay = document.getElementById("slotDisplay")
+            let studioElement = document.getElementById("studioSelect")
+            let display = document.getElementById("slotSection")
+            display.classList.add("hide")
+            slotDisplay.innerHTML = ""
+            lastClickedTimeSlot = ""
+            allowDatePick = true
+            studioElement.value = ""
+            studioElement.removeAttribute("disabled", "disabled")
+            datePickerElement.removeAttribute("disabled", "disabled")
+            picker.reset()
+        }
+
+        let displayMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        let displayDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        let fetchDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+        let timeSlots = ["", "9:00 AM - 10:15 AM (IST)", "10:15 AM - 11:30 AM (IST)", "11:45 AM - 1:00 PM (IST)", "2:00 PM - 3:15 PM (IST)", "3:15 PM - 4:30 PM (IST)", "4:45 PM - 6:00 PM (IST)"]
+
+        function showSlots() {
+            let studioElement = document.getElementById("studioSelect")
+            let studio = studioElement.value
+            const day = picker.getDay();
+            if (day == null || studio == "") {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: false,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                if (day == null) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Select a Date'
+                    })
+                }
+                else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Select studio'
+                    })
+                }
+            }
+            else {
+                let displayStr = ""
+
+                const date = picker.getDate();
+                const month = picker.getMonth();
+                displayStr = displayDays[day] + " " + date + "th" + " " + displayMonths[month]
+
+                let slotDisplay = document.getElementById("slotDisplay")
+                slotDisplay.innerHTML = ""
+                let header = document.getElementById("slotHeader")
+                let datePickerElement = document.getElementById("datepicker")
+                header.innerHTML = displayStr
+
+                studioElement.setAttribute("disabled", "disabled")
+                datePickerElement.setAttribute("disabled", "disabled")
+                allowDatePick = false
+
+                fetch("/admin-shedule-booking", {
+                    headers: { 'Content-Type': "application/json" },
+                    method: "POST",
+                    body: JSON.stringify({ flag: '2', day: fetchDays[day], studio: studio }),
+                }).then(res => res.json()).then(data => {
+                    let shedule = data.data
+                    let key = "slot"
+                    for (var i = 1; i <= 6; i++) {
+                        if (shedule[key + i] == "") {
+                            let li = document.createElement("li")
+                            li.setAttribute("tabindex", "1")
+                            li.setAttribute("class", "list")
+                            li.setAttribute("onclick", "timeSlotClicked('slot" + i + "')")
+
+                            let div = document.createElement("div")
+
+                            let span = document.createElement("span")
+                            span.setAttribute("data-value", key + i)
+                            span.setAttribute("class", "timeDisplay")
+                            span.innerHTML = timeSlots[i]
+
+                            div.appendChild(span)
+                            li.appendChild(div)
+                            slotDisplay.appendChild(li)
+                        }
+                        else { }
+                    }
+                });
+
+                let display = document.getElementById("slotSection")
+                display.classList.remove("hide")
+            }
+        }
+
+        async function bookSlot() {
+            try {
+                let studio = document.getElementById("studioSelect").value
+                let day = fetchDays[picker.getDay()]
+                let date = picker.getFormatedDate()
+                let timeSlot = lastClickedTimeSlot
+
+                if (studio && timeSlot) {
+                    fetch("/admin-shedule-booking", {
+                        headers: { 'Content-Type': "application/json" },
+                        method: "POST",
+                        body: JSON.stringify({ flag: '3' }),
+                    }).then(res => res.json()).then(response => {
+                        let facultyList = response.data
+                        let inputOptions = {}
+                        inputOptions["reserve"] = "Reserve Slot"
+                        for (let i = 0; i < facultyList.length; i++) {
+                            inputOptions[facultyList[i]["value"]] = facultyList[i]["display"]
+                        }
+                        const fire1 = Swal.fire({
+                            title: 'Select Faculty Name',
+                            input: 'select',
+                            inputOptions: inputOptions,
+                            inputPlaceholder: 'Select a faculty',
+                            showCancelButton: true,
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'You need to choose a faculty!'
+                                }
+                            }
+                        }).then(async (selectedFaculty) => {
+                            if (selectedFaculty.isConfirmed) {
+                                if (selectedFaculty["value"] == "reserve") {
+                                    const { value: formValues } = await Swal.fire({
+                                        title: 'Reservation Details',
+                                        html:
+                                            '<div><label for="swal-input1">Event Name</label>' +
+                                            '<input id="swal-input1" class="swal2-input" style="height:32px;font-size: 20px;" required="true"></div>' +
+                                            '<div class=""><label for="swal-input2">Organization</label>' +
+                                            '<input id="swal-input2" class="swal2-input" style="height:32px;font-size: 20px;"></div>',
+                                        focusConfirm: false,
+                                        preConfirm: () => {
+                                            return new Promise(function (resolve) {
+                                                if ($('#swal-input1').val() == '' || $('#swal-input2').val() == '') {
+                                                    Swal.showValidationMessage("Enter a value in both fields");
+                                                    Swal.enableButtons()
+                                                } else {
+                                                    Swal.resetValidationMessage();
+                                                    resolve([
+                                                        $('#swal-input1').val(),
+                                                        $('#swal-input2').val()
+                                                    ]);
+                                                }
+                                            })
+                                        }
+                                    })
+                                    if (formValues) {
+                                        Swal.fire({
+                                            title: 'Are you sure?',
+                                            text: "You want to book the slot?",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#3085d6',
+                                            cancelButtonColor: '#d33',
+                                            confirmButtonText: 'Yes, change!'
+                                        }).then((e) => {
+                                            if (e.isConfirmed) {
+                                                fetch("/admin-shedule-booking", {
+                                                    headers: { 'Content-Type': "application/json" },
+                                                    method: "POST",
+                                                    body: JSON.stringify({ flag: '5', day: day, studio: studio, timeSlot: timeSlot, reason: formValues[0], organization: formValues[1], date:date  }),
+                                                }).then(res => res.json()).then(data => {
+                                                    if (data.status) {
+                                                        Swal.fire({
+                                                            position: 'center',
+                                                            icon: 'success',
+                                                            title: 'Slot Reserved Succesfully',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                        }).then((temp) => {
+                                                            location.reload();
+                                                        })
+                                                    }
+                                                    else {
+                                                        Swal.fire({
+                                                            title: 'Something went wrong',
+                                                            icon: 'error',
+                                                            showConfirmButton: true
+                                                        })
+                                                    }
+                                                });
+                                            }
+                                        })
+                                    }
+
+                                }
+                                else {
+                                    Swal.fire({
+                                        title: 'Are you sure?',
+                                        text: "You want to book the slot?",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Yes, change!'
+                                    }).then((e) => {
+                                        if (e.isConfirmed) {
+                                            let facultyName = selectedFaculty["value"].split("/")[0]
+                                            let facultyId = selectedFaculty["value"].split("/")[1]
+                                            fetch("/admin-shedule-booking", {
+                                                headers: { 'Content-Type': "application/json" },
+                                                method: "POST",
+                                                body: JSON.stringify({ flag: '1', day: day, studio: studio, timeSlot: timeSlot, facultyName: facultyName, facultyId: facultyId }),
+                                            }).then(res => res.json()).then(data => {
+                                                Swal.fire({
+                                                    position: 'center',
+                                                    icon: 'success',
+                                                    title: 'Slot Booked Succesfully',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                }).then((temp) => {
+                                                    location.reload();
+                                                })
+                                            });
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    })
+                }
+                else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Select a Slot First',
+                        showConfirmButton: true
+                    })
+                }
+            }
+            catch (err) {
+                console.log(err)
+                Swal.fire({
+                    title: 'Something went wrong',
+                    icon: 'error',
+                    showConfirmButton: true
+                })
+            }
+        }
+
+        async function reserveSlot() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Reservation Details',
+                html:
+                    '<label for="swal-input1">Event Name</label>' +
+                    '<input id="swal-input1" class="swal2-input" style="height:32px;font-size: 20px;" required="true">' +
+                    '<label for="swal-input2">Event Name</label>' +
+                    '<input id="swal-input2" class="swal2-input" style="height:32px;font-size: 20px;">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return new Promise(function (resolve) {
+                        if ($('#swal-input1').val() == '' || $('#swal-input2').val() == '') {
+                            Swal.showValidationMessage("Enter a value in both fields");
+                            Swal.enableButtons()
+                        } else {
+                            Swal.resetValidationMessage();
+                            resolve([
+                                $('#swal-input1').val(),
+                                $('#swal-input2').val()
+                            ]);
+                        }
+                    })
+                }
+            })
+            console.log(formValues)
+        }
+    </script>
+</body>
+
+</html>

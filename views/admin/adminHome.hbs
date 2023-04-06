@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/styleAdminHome.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script type="text/javascript">
+        function preventBack() { window.history.forward(); }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };  
+    </script>
+</head>
+
+<body>
+    <div class="overlay" onclick="off()"></div>
+    <button style="display: none;" id="nonPurpose" value="{{justLoggedIn}}"></button>
+    <header class="text-center row" id="preProductionHomeHeader">
+        <div class="col-12">
+            <img src="https://vit.ac.in/files/gravitas19/images/vit_white.png" id="preProductionHomeLogo" alt="">
+        </div>
+        <div class="topright col-4">
+            <a href="" style="text-decoration: none; color:#fff">
+                <div class="row">
+                    <div class="col-2" style="">
+                        <img src="https://cdn-icons-png.flaticon.com/128/3237/3237472.png" width="40" height="40"
+                            style="" alt="">
+                    </div>
+                    <div class="col-10 pt-2" id="usernameLogo">
+                        {{user.facultyName}}
+                    </div>
+                </div>
+            </a>
+        </div>
+    </header>
+    <div class="containerMain">
+        <a href="#" class="toggleBox">
+            <span class="icon"></span>
+        </a>
+        <ul class="navItems">
+            <li>
+                <a href="/admin-home">
+                    <i class="fa fa-home" style="--i:1"></i>
+                    <span style="--g:1">home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/course-add-form">
+                    <i class="fa fa-user" style="--i:2"></i>
+                    <span style="--g:2">Add course</span>
+                </a>
+            </li>
+            <li>
+                <a href="/reports-view">
+                    <i class="fa fa-folder" style="--i:3"></i>
+                    <span style="--g:3">reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-password-change">
+                    <i class="fa-solid fa-file-circle-check" style="--i:4"></i>
+                    <span style="--g:4">Database management</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-view">
+                    <i class="fa-solid fa-calendar-days" style="--i:5"></i>
+                    <span style="--g:5">shedule</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-booking">
+                    <i class="fa-solid fa-calendar-days" style="--i:6"></i>
+                    <span style="--g:6">shedule Booking</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fa fa-globe" style="--i:7"></i>
+                    <span style="--g:7">logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <section id="tableSection" class="table-responsive-lg p-4" style="overflow-x:auto; ">
+        <div class="text-center mb-4">
+            <h3 style="color: #004bff;">Recent Courses</h3>
+        </div>
+        <table class="table table-sm table-bordered table-hover auto-index table-striped " cell-padding="10">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">Sno</th>
+                    <th scope="col" style="width:550px;" class="text-center">Course Id and Course Name</th>
+                    <th scope="col" class="text-center">Semester</th>
+                    <th scope="col" class="text-center">Prof Name</th>
+                    <th scope="col" class="text-center">Degree</th>
+                    <th scope="col" class="text-center">Credit</th>
+                    <th scope="col" class="text-center">Target time</th>
+                    <th scope="col" class="text-center">Editor Name</th>
+                    <th scope="col" class="text-center">Production <br> Mins &nbsp&nbspSec</th>
+                    <th scope="col" class="text-center">Post Production <br> Mins &nbsp&nbspSec</th>
+                    <th scope="col" class="text-center">LMS <br> Mins &nbsp&nbspSec</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each courses}}
+                <tr style="height: 15px;">
+                    <td class="text-center"></td>
+                    <td class="">{{this.courseId}} &nbsp &nbsp {{this.courseName}}</td>
+                    <td class="text-center">{{this.semester}}</td>
+                    <td>{{this.facultyName}}</td>
+                    <td class="text-center">{{this.degree}}</td>
+                    <td class="text-center">{{this.credits}}</td>
+                    <td class="text-center">{{this.durationTarget}}</td>
+                    <td>{{this.editorName}}</td>
+                    <td class="text-center">{{this.preCompletedMinutes}}m &nbsp {{this.preCompletedSeconds}}s</td>
+                    <td class="text-center">{{this.postCompletedMinutes}}m &nbsp {{this.postCompletedSeconds}}s</td>
+                    <td class="text-center">{{this.totalCompletedRenderedMinutes}}m &nbsp
+                        {{this.totalCompletedRenderedSeconds}}s</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+        crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        var toggleClick = document.querySelector(".toggleBox");
+        var containerMain = document.querySelector(".containerMain");
+        var overlayScreen = document.querySelector(".overlay");
+
+        toggleClick.addEventListener('click', () => {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        })
+
+        function off() {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        }
+        window.onload = function showLoggedIn() {
+            justLoggedIn = document.getElementById("nonPurpose").value
+            if (justLoggedIn == "1") {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Signed in successfully'
+                })
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>

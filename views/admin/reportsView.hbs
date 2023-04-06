@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/styleReportsView.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="overlay" onclick="off()"></div>
+    <header class="text-center" id="preProductionHomeHeader">
+        <div class="">
+            <img src="https://vit.ac.in/files/gravitas19/images/vit_white.png" id="preProductionHomeLogo" alt="">
+        </div>
+        <div class="topright">
+            <a href="" style="text-decoration: none; color:#fff">
+                <img src="https://cdn-icons-png.flaticon.com/128/3237/3237472.png" width="40" height="40" alt="">
+                {{user.facultyName}}
+            </a>
+        </div>
+    </header>
+    <div class="containerMain">
+        <a href="#" class="toggleBox">
+            <span class="icon"></span>
+        </a>
+        <ul class="navItems">
+            <li>
+                <a href="/admin-home">
+                    <i class="fa fa-home" style="--i:1"></i>
+                    <span style="--g:1">home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/course-add-form">
+                    <i class="fa fa-user" style="--i:2"></i>
+                    <span style="--g:2">Add course</span>
+                </a>
+            </li>
+            <li>
+                <a href="/reports-view">
+                    <i class="fa fa-folder" style="--i:3"></i>
+                    <span style="--g:3">reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-password-change">
+                    <i class="fa-solid fa-file-circle-check" style="--i:4"></i>
+                    <span style="--g:4">Database management</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-view">
+                    <i class="fa-solid fa-calendar-days" style="--i:5"></i>
+                    <span style="--g:5">shedule</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-booking">
+                    <i class="fa-solid fa-calendar-days" style="--i:6"></i>
+                    <span style="--g:6">shedule Booking</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fa fa-globe" style="--i:7"></i>
+                    <span style="--g:7">logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <section class="menuDiv">
+        <div class="row g-3">
+            <div class="col-lg-6 col-md-6 col-12 p-3 m-2" style="background-color: powderblue; border-radius:12px">
+                <div class="col-auto">
+                    <label for="idSemester">Semester</label>
+                    <select class="form-select" name="reportType" id="semesterSelector" style="width: 200px;">
+                        <option value="" selected>Semester...</option>
+                        {{#each semesters}}
+                        <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="col-auto m-1 mt-2">
+                    <div class="row">
+                        <div class="col-lg-6 col-6">
+                            <label for="idFromDate">From</label>
+                            <input type="date" name="fromDate" class="form-control" id="idFromDate">
+                        </div>
+                        <div class="col-lg-6 col-6">
+                            <label for="idToDate">To(Not Included)</label>
+                            <input type="date" name="toDate" class="form-control" id="idToDate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto mt-2" style="display: flex;justify-content: flex-end;">
+                    <button type="button" class="btn btn-primary mb-3" id=""
+                        onclick="generateReportTypeFilter()">Generate</button>
+                </div>
+                <div class="row">
+                    <div class="col-auto mt-3">
+                        <button type="button" class="btn btn-warning mb-3" id="" onclick="generateDbBackup()">Generate
+                            Backup</button>
+                    </div>
+                    <div class="col-auto mt-3">
+                        <button type="button" class="btn btn-success mb-3" id=""
+                            onclick="generateStatistics()">Statistics</button>
+                    </div>
+                    <div class="col-auto mt-3">
+                        <button type="button" class="btn btn-success mb-3" id=""
+                            onclick="exportToExcel()">Export</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-5 col-12 m-1">
+                <div class="row m-2 p-3" style="background-color: powderblue; border-radius:12px">
+                    <div class="col-lg-8 col-md-6 col-sm-6 m-2">
+                        <select class="form-select" name="reportType" id="editorSelector">
+                            <option value="" selected>Editor Name...</option>
+                            {{#each editorsList}}
+                            <option value="{{this.value}}">{{this.display}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-4 m-2">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary mb-3"
+                                onclick="generateEditorFilter()">Generate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row m-2 p-3" style="background-color: powderblue; border-radius:12px">
+                    <div class="col-lg-8 col-md-6 col-sm-6 m-2">
+                        <select class="form-select" name="reportType" id="degreeSelector">
+                            <option value="" selected>Degree...</option>
+                            {{#each degreeList}}
+                            <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-4 m-2">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary mb-3"
+                                onclick="generateDegreeFilter()">Generate</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row m-2 p-3" style="background-color: powderblue; border-radius:12px">
+                    <div class="col-lg-8 col-md-6 col-sm-6 m-2">
+                        <select class="form-select" name="" id="searchSelector">
+                            <option value="" selected>Select Course...</option>
+                            {{#each courseList}}
+                            <option value="{{this.value}}">{{this.display}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-4 m-2">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary mb-3"
+                                onclick="generateSearchFilter()">Search</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="tableSection" class="table-responsive-lg p-4" style="overflow-x:auto; ">
+        <table class="table table-sm table-bordered table-hover auto-index " id="displayTable" cell-padding="10">
+            <thead id="tableHead">
+
+            </thead>
+            <tbody id="tableBody">
+
+            </tbody>
+        </table>
+
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+        crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var toggleClick = document.querySelector(".toggleBox");
+        var containerMain = document.querySelector(".containerMain");
+        var overlayScreen = document.querySelector(".overlay");
+
+        toggleClick.addEventListener('click', () => {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        });
+
+
+        function off() {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        }
+
+        let exportData = []
+
+        function generateReportTypeFilter() {
+            exportData = []
+            fromDate = document.getElementById("idFromDate").value
+            toDate = document.getElementById("idToDate").value
+            let semester = document.getElementById("semesterSelector").value
+            if ((fromDate && toDate) || (fromDate == '' && toDate == '')) {
+                Swal.fire({
+                    title: 'Loading',
+                    text: 'Please wait while we prepare the report for you',
+                    timer: 500,
+                    didOpen: () => {
+                        swal.showLoading();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        fetch("/reports-view", {
+                            headers: { 'Content-Type': "application/json" },
+                            method: "POST",
+                            body: JSON.stringify({ semester: semester }),
+                        }).then(res => res.json()).then((data) => {
+                            let tableHead = document.getElementById("tableHead")
+                            let tableBody = document.getElementById("tableBody")
+                            $("#displayTable").addClass("table-striped")
+                            tableHead.innerHTML = ""
+                            tableBody.innerHTML = ""
+                            let headTr = document.createElement("tr")
+                            let th1 = document.createElement("th")
+                            let th2 = document.createElement("th")
+                            let th3 = document.createElement("th")
+                            let th4 = document.createElement("th")
+                            let th5 = document.createElement("th")
+                            let th6 = document.createElement("th")
+                            let th7 = document.createElement("th")
+                            let th8 = document.createElement("th")
+                            let th9 = document.createElement("th")
+                            let th10 = document.createElement("th")
+                            let th11 = document.createElement("th")
+                            let th12 = document.createElement("th")
+                            let th13 = document.createElement("th")
+
+                            th1.setAttribute("style", "width: 50px;")
+                            th1.setAttribute("class", "text-center")
+                            th1.innerHTML = "Sno"
+                            th2.setAttribute("style", "width: 350px;")
+                            th2.setAttribute("class", "text-center")
+                            th2.innerHTML = "Course Id and Course Name"
+                            th13.setAttribute("style", "width: 10px;")
+                            th13.setAttribute("class", "text-center")
+                            th13.innerHTML = "Semester"
+                            th3.setAttribute("style", "width: 150px;")
+                            th3.setAttribute("class", "text-center")
+                            th3.innerHTML = "Faculty Name"
+                            th4.setAttribute("style", "width: 70px;")
+                            th4.setAttribute("class", "text-center")
+                            th4.innerHTML = "Degree"
+                            th5.setAttribute("style", "width: 30px;")
+                            th5.setAttribute("class", "text-center")
+                            th5.innerHTML = "Credits"
+                            th6.setAttribute("style", "width: 70px;")
+                            th6.setAttribute("class", "text-center")
+                            th6.innerHTML = "Target time"
+                            th7.setAttribute("style", "width: 140px;")
+                            th7.setAttribute("class", "text-center")
+                            th7.innerHTML = "Editor Name"
+                            th8.setAttribute("style", "width: 70px;")
+                            th8.setAttribute("class", "text-center")
+                            th8.innerHTML = "Production <br> Mins &nbsp&nbspSec"
+                            th9.setAttribute("style", "width: 80px;")
+                            th9.setAttribute("class", "text-center")
+                            th9.innerHTML = "Post Production <br> Mins &nbsp&nbspSec"
+                            th10.setAttribute("style", "width: 80px;")
+                            th10.setAttribute("class", "text-center")
+                            th10.innerHTML = "LMS <br>  Mins &nbsp&nbspSec"
+                            th11.setAttribute("style", "width: 100px;")
+                            th11.setAttribute("class", "text-center")
+                            th11.innerHTML = "status"
+                            th12.setAttribute("style", "width: 90px;")
+                            th12.setAttribute("class", "text-center")
+                            th12.innerHTML = "Operations"
+
+                            headTr.appendChild(th1)
+                            headTr.appendChild(th2)
+                            headTr.appendChild(th13)
+                            headTr.appendChild(th3)
+                            headTr.appendChild(th4)
+                            headTr.appendChild(th5)
+                            headTr.appendChild(th6)
+                            headTr.appendChild(th7)
+                            headTr.appendChild(th8)
+                            headTr.appendChild(th9)
+                            headTr.appendChild(th10)
+                            headTr.appendChild(th11)
+                            headTr.appendChild(th12)
+                            tableHead.appendChild(headTr)
+                            let sno = 1
+                            if (fromDate && toDate) {
+                                for (var i = 0; i < data.length; i++) {
+                                    let reqData = data[i]
+                                    //let courseDetails = {}
+                                    let rawPreTopics = Object.values(reqData.preTopicsCompleted)
+                                    let includedPreTopics = []
+
+                                    for (var j = 0; j < rawPreTopics.length; j++) {
+                                        let f = fromDate.split("-")
+                                        let t = toDate.split("-")
+                                        let w = rawPreTopics[j].split("-")
+                                        let from = new Date(f[0], f[1] - 1, f[2])
+                                        let to = new Date(t[0], t[1] - 1, t[2])
+                                        let wanted = new Date(w[2], w[1] - 1, w[0])
+
+                                        //console.log(from + "///" + wanted + "///" + to)
+                                        if (from <= wanted && wanted <= to && !(includedPreTopics.includes(rawPreTopics[j]))) {
+                                            includedPreTopics.push(rawPreTopics[j])
+                                        }
+                                    }
+
+                                    let preMins = 0
+                                    let preSecs = 0
+                                    for (var j = 0; j < includedPreTopics.length; j++) {
+                                        preMins = preMins + parseInt(reqData[includedPreTopics[j]]["minutesRecorded"])
+                                        preSecs = preSecs + parseInt(reqData[includedPreTopics[j]]["secondsRecorded"])
+                                        let extra = Math.floor(preSecs / 60)
+                                        preSecs = preSecs % 60
+                                        preMins = preMins + extra
+                                    }
+
+                                    let rawPostTopics = Object.keys(reqData.postTopicsCompleted)
+                                    let includedPostTopics = []
+                                    for (var j = 0; j < rawPostTopics.length; j++) {
+                                        let f = fromDate.split("-")
+                                        let t = toDate.split("-")
+                                        let w = new Date(reqData.postTopicsCompleted[rawPostTopics[j]]["timestamp"])
+                                        let from = new Date(f[0], f[1] - 1, f[2])
+                                        let to = new Date(t[0], t[1] - 1, t[2])
+                                        let wanted = new Date(w.getUTCFullYear(), w.getUTCMonth(), w.getUTCDate())
+
+                                        //console.log(from + "///" + wanted + "///" + to)
+                                        if (from <= wanted && wanted <= to && !(includedPostTopics.includes(rawPostTopics[j]))) {
+                                            includedPostTopics.push(rawPostTopics[j])
+                                        }
+                                    }
+
+                                    let postMins = 0
+                                    let postSecs = 0
+                                    for (var j = 0; j < includedPostTopics.length; j++) {
+                                        duration = reqData["postTopicsCompleted"][includedPostTopics[j]]["duration"].split(":")
+                                        postMins = postMins + parseInt(duration[0])
+                                        postSecs = postSecs + parseInt(duration[1])
+                                        let extra = Math.floor(postSecs / 60)
+                                        postSecs = postSecs % 60
+                                        postMins = postMins + extra
+                                    }
+
+                                    let lmsMins = 0
+                                    let lmsSecs = 0
+                                    if (reqData.confirmedTimestamp) {
+                                        let rawLms = Object.keys(reqData.confirmedTimestamp)
+                                        let includedLms = []
+
+                                        for (var j = 0; j < rawLms.length; j++) {
+                                            let f = fromDate.split("-")
+                                            let t = toDate.split("-")
+                                            let w = new Date(reqData.confirmedTimestamp[rawLms[j]])
+                                            let from = new Date(f[0], f[1] - 1, f[2])
+                                            let to = new Date(t[0], t[1] - 1, t[2])
+                                            let wanted = new Date(w.getUTCFullYear(), w.getUTCMonth(), w.getUTCDate())
+
+                                            //console.log(from + "///" + wanted + "///" + to)
+                                            if (from <= wanted && wanted <= to && !(includedLms.includes(rawLms[j]))) {
+                                                includedLms.push(rawLms[j])
+                                            }
+                                        }
+                                        //console.log(includedLms)
+
+                                        for (var j = 0; j < includedLms.length; j++) {
+                                            duration = reqData["postTopicsCompleted"][includedLms[j]]["duration"].split(":")
+                                            lmsMins = lmsMins + parseInt(duration[0])
+                                            lmsSecs = lmsSecs + parseInt(duration[1])
+                                            let extra = Math.floor(lmsSecs / 60)
+                                            lmsSecs = lmsSecs % 60
+                                            lmsMins = lmsMins + extra
+                                        }
+                                    }
+
+                                    if (preMins == 0 && preSecs == 0 && postMins == 0 && postSecs == 0 && lmsMins == 0 && lmsSecs == 0) {
+                                        continue;
+                                    }
+
+                                    let tr = document.createElement("tr")
+                                    tr.setAttribute("style", "height: 15px;")
+
+                                    let td1 = document.createElement("td")
+                                    let td2 = document.createElement("td")
+                                    let td3 = document.createElement("td")
+                                    let td4 = document.createElement("td")
+                                    let td5 = document.createElement("td")
+                                    let td6 = document.createElement("td")
+                                    let td7 = document.createElement("td")
+                                    let td8 = document.createElement("td")
+                                    let td9 = document.createElement("td")
+                                    let td10 = document.createElement("td")
+                                    let td11 = document.createElement("td")
+                                    let td12 = document.createElement("td")
+                                    let td13 = document.createElement("td")
+
+                                    td1.innerHTML = sno
+                                    td1.setAttribute("class", "text-center")
+
+                                    td2.innerHTML = reqData["courseId"] + '  &nbsp &nbsp' + reqData["courseName"]
+                                    td2.setAttribute("class", "")
+                                    td13.innerHTML = reqData["semester"]
+                                    td13.setAttribute("class", "text-center")
+                                    td3.innerHTML = reqData["facultyName"]
+                                    td4.innerHTML = reqData["degree"]
+                                    td4.setAttribute("class", "text-center")
+                                    td5.innerHTML = reqData["credits"]
+                                    td5.setAttribute("class", "text-center")
+                                    td6.innerHTML = reqData["durationTarget"]
+                                    td6.setAttribute("class", "text-center")
+                                    td7.innerHTML = reqData["editorName"]
+                                    td8.innerHTML = preMins + "m &nbsp " + preSecs + "s"
+                                    td8.setAttribute("class", "text-center")
+                                    td9.innerHTML = postMins + "m  &nbsp " + postSecs + "s"
+                                    td9.setAttribute("class", "text-center")
+                                    td10.innerHTML = lmsMins + "m  &nbsp " + lmsSecs + "s"
+                                    td10.setAttribute("class", "text-center")
+
+                                    let span = document.createElement("span")
+                                    span.setAttribute("class", "badge rounded-pill d-inline statusSpan")
+                                    span.innerHTML = reqData["status"]
+                                    td11.setAttribute("class", "text-center")
+                                    td11.appendChild(span)
+
+                                    let button = document.createElement("button")
+                                    button.setAttribute("type", "button")
+                                    button.setAttribute("class", "btn btn-sm btn-rounded")
+                                    button.setAttribute("value", reqData["_id"])
+                                    button.setAttribute("onclick", "deatilView(this.value)")
+                                    button.setAttribute("style", "background-color:#ffebc2;")
+                                    button.innerHTML = "Edit"
+                                    td12.setAttribute("class", "text-center")
+                                    td12.appendChild(button)
+
+                                    //Export Data
+                                    let courseExportData = {}
+                                    courseExportData["Sno"] = i + 1
+                                    courseExportData["Course ID"] = reqData["courseId"]
+                                    courseExportData["Course Name"] = reqData["courseName"]
+                                    courseExportData["Semester"] = reqData["semester"]
+                                    courseExportData["Faculty"] = reqData["facultyName"]
+                                    courseExportData["Degree"] = reqData["degree"]
+                                    courseExportData["Credits"] = reqData["credits"]
+                                    courseExportData["Duration Target"] = reqData["durationTarget"]
+                                    courseExportData["Editor"] = reqData["editorName"]
+                                    courseExportData["Production"] = preMins + "m " + preSecs + "s"
+                                    courseExportData["Editing"] = postMins + "m  " + postSecs + "s"
+                                    courseExportData["LMS"] = lmsMins + "m  " + lmsSecs + "s"
+                                    exportData.push(courseExportData)
+
+
+                                    tr.appendChild(td1)
+                                    tr.appendChild(td2)
+                                    tr.appendChild(td13)
+                                    tr.appendChild(td3)
+                                    tr.appendChild(td4)
+                                    tr.appendChild(td5)
+                                    tr.appendChild(td6)
+                                    tr.appendChild(td7)
+                                    tr.appendChild(td8)
+                                    tr.appendChild(td9)
+                                    tr.appendChild(td10)
+                                    tr.appendChild(td11)
+                                    tr.appendChild(td12)
+
+                                    tableBody.appendChild(tr)
+                                    sno++
+                                }
+                            }
+                            else {
+                                for (var i = 0; i < data.length; i++) {
+                                    let reqData = data[i]
+
+                                    let tr = document.createElement("tr")
+                                    tr.setAttribute("style", "height: 15px;")
+
+                                    let td1 = document.createElement("td")
+                                    let td2 = document.createElement("td")
+                                    let td3 = document.createElement("td")
+                                    let td4 = document.createElement("td")
+                                    let td5 = document.createElement("td")
+                                    let td6 = document.createElement("td")
+                                    let td7 = document.createElement("td")
+                                    let td8 = document.createElement("td")
+                                    let td9 = document.createElement("td")
+                                    let td10 = document.createElement("td")
+                                    let td11 = document.createElement("td")
+                                    let td12 = document.createElement("td")
+                                    let td13 = document.createElement("td")
+
+                                    td1.innerHTML = i + 1
+                                    td1.setAttribute("class", "text-center")
+
+                                    td2.innerHTML = reqData["courseId"] + '  &nbsp &nbsp' + reqData["courseName"]
+                                    td2.setAttribute("class", "")
+                                    td13.innerHTML = reqData["semester"]
+                                    td13.setAttribute("class", "text-center")
+                                    td3.innerHTML = reqData["facultyName"]
+                                    td4.innerHTML = reqData["degree"]
+                                    td4.setAttribute("class", "text-center")
+                                    td5.innerHTML = reqData["credits"]
+                                    td5.setAttribute("class", "text-center")
+                                    td6.innerHTML = reqData["durationTarget"]
+                                    td6.setAttribute("class", "text-center")
+                                    td7.innerHTML = reqData["editorName"]
+                                    td8.innerHTML = reqData["preCompletedMinutes"] + "m &nbsp " + reqData["preCompletedSeconds"] + "s"
+                                    td8.setAttribute("class", "text-center")
+                                    td9.innerHTML = reqData["postCompletedMinutes"] + "m  &nbsp " + reqData["postCompletedSeconds"] + "s"
+                                    td9.setAttribute("class", "text-center")
+                                    td10.innerHTML = reqData["totalCompletedRenderedMinutes"] + "m  &nbsp " + reqData["totalCompletedRenderedSeconds"] + "s"
+                                    td10.setAttribute("class", "text-center")
+
+                                    let span = document.createElement("span")
+                                    span.setAttribute("class", "badge rounded-pill d-inline statusSpan")
+                                    span.innerHTML = reqData["status"]
+                                    td11.setAttribute("class", "text-center")
+                                    td11.appendChild(span)
+
+                                    let button = document.createElement("button")
+                                    button.setAttribute("type", "button")
+                                    button.setAttribute("class", "btn btn-sm btn-rounded")
+                                    button.setAttribute("value", reqData["_id"])
+                                    button.setAttribute("onclick", "deatilView(this.value)")
+                                    button.setAttribute("style", "background-color:#ffebc2;")
+                                    button.innerHTML = "Edit"
+                                    td12.setAttribute("class", "text-center")
+                                    td12.appendChild(button)
+
+                                    //Export Data
+                                    let courseExportData = {}
+                                    courseExportData["Sno"] = i + 1
+                                    courseExportData["Course ID"] = reqData["courseId"]
+                                    courseExportData["Course Name"] = reqData["courseName"]
+                                    courseExportData["Semester"] = reqData["semester"]
+                                    courseExportData["Faculty"] = reqData["facultyName"]
+                                    courseExportData["Degree"] = reqData["degree"]
+                                    courseExportData["Credits"] = reqData["credits"]
+                                    courseExportData["Duration Target"] = reqData["durationTarget"]
+                                    courseExportData["Editor"] = reqData["editorName"]
+                                    courseExportData["Production"] = reqData["preCompletedMinutes"] + "m " + reqData["preCompletedSeconds"] + "s"
+                                    courseExportData["Editing"] = reqData["postCompletedMinutes"] + "m  " + reqData["postCompletedSeconds"] + "s"
+                                    courseExportData["LMS"] = reqData["totalCompletedRenderedMinutes"] + "m  " + reqData["totalCompletedRenderedSeconds"] + "s"
+                                    exportData.push(courseExportData)
+
+                                    tr.appendChild(td1)
+                                    tr.appendChild(td2)
+                                    tr.appendChild(td13)
+                                    tr.appendChild(td3)
+                                    tr.appendChild(td4)
+                                    tr.appendChild(td5)
+                                    tr.appendChild(td6)
+                                    tr.appendChild(td7)
+                                    tr.appendChild(td8)
+                                    tr.appendChild(td9)
+                                    tr.appendChild(td10)
+                                    tr.appendChild(td11)
+                                    tr.appendChild(td12)
+
+                                    tableBody.appendChild(tr)
+                                }
+                            }
+                            Swal.fire({
+                                title: 'Finished!',
+                                icon: 'success',
+                                timer: 1000,
+                                showConfirmButton: false
+                            }).then((response) => {
+
+                            })
+                        })
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Select both the Dates or None'
+                })
+            }
+        }
+
+        function generateEditorFilter() {
+            let editor = document.getElementById("editorSelector")
+            let semester = document.getElementById("semesterSelector").value
+            let fromDate = ""
+            if (editor.value != "") {
+                Swal.fire({
+                    title: 'Loading',
+                    text: 'Please wait while we prepare the report for you',
+                    timer: 500,
+                    didOpen: () => {
+                        swal.showLoading();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        fetch("/reports-view", {
+                            headers: { 'Content-Type': "application/json" },
+                            method: "POST",
+                            body: JSON.stringify({ semester: semester }),
+                        }).then(res => res.json()).then((data) => {
+                            let tableHead = document.getElementById("tableHead")
+                            let tableBody = document.getElementById("tableBody")
+                            $("#displayTable").addClass("table-striped")
+                            tableHead.innerHTML = ""
+                            tableBody.innerHTML = ""
+
+                            let editorName = editor.options[editor.selectedIndex].innerHTML.split("-")[0]
+
+                            let headTr = document.createElement("tr")
+                            let th1 = document.createElement("th")
+                            let th2 = document.createElement("th")
+                            let th3 = document.createElement("th")
+                            let th4 = document.createElement("th")
+                            let th5 = document.createElement("th")
+                            let th6 = document.createElement("th")
+                            let th7 = document.createElement("th")
+                            let th8 = document.createElement("th")
+                            let th9 = document.createElement("th")
+                            let th10 = document.createElement("th")
+                            let th11 = document.createElement("th")
+                            let th12 = document.createElement("th")
+
+                            th1.setAttribute("style", "width: 50px;")
+                            th1.setAttribute("class", "text-center")
+                            th1.innerHTML = "Sno"
+                            th2.setAttribute("style", "width: 100px;")
+                            th2.setAttribute("class", "text-center")
+                            th2.innerHTML = "Course Code"
+                            th3.setAttribute("style", "width: 150px;")
+                            th3.setAttribute("class", "text-center")
+                            th3.innerHTML = "Prof Name"
+                            th4.setAttribute("style", "width: 70px;")
+                            th4.setAttribute("class", "text-center")
+                            th4.innerHTML = "Degree"
+                            th5.setAttribute("style", "width: 30px;")
+                            th5.setAttribute("class", "text-center")
+                            th5.innerHTML = "Credits"
+                            th6.setAttribute("style", "width: 70px;")
+                            th6.setAttribute("class", "text-center")
+                            th6.innerHTML = "Target time"
+                            th7.setAttribute("style", "width: 140px;")
+                            th7.setAttribute("class", "text-center")
+                            th7.innerHTML = "Editor Name"
+                            th8.setAttribute("style", "width: 70px;")
+                            th8.setAttribute("class", "text-center")
+                            th8.innerHTML = "Production <br> Mins &nbsp&nbspSec"
+                            th9.setAttribute("style", "width: 80px;")
+                            th9.setAttribute("class", "text-center")
+                            th9.innerHTML = "Post Production <br> Mins &nbsp&nbspSec"
+                            th10.setAttribute("style", "width: 80px;")
+                            th10.setAttribute("class", "text-center")
+                            th10.innerHTML = "LMS  <br> Mins &nbsp&nbspSec"
+                            th11.setAttribute("style", "width: 100px;")
+                            th11.setAttribute("class", "text-center")
+                            th11.innerHTML = "status"
+                            th12.setAttribute("style", "width: 90px;")
+                            th12.setAttribute("class", "text-center")
+                            th12.innerHTML = "Operations"
+
+                            headTr.appendChild(th1)
+                            headTr.appendChild(th2)
+                            headTr.appendChild(th3)
+                            headTr.appendChild(th4)
+                            headTr.appendChild(th5)
+                            headTr.appendChild(th6)
+                            headTr.appendChild(th7)
+                            headTr.appendChild(th8)
+                            headTr.appendChild(th9)
+                            headTr.appendChild(th10)
+                            headTr.appendChild(th11)
+                            headTr.appendChild(th12)
+                            tableHead.appendChild(headTr)
+
+                            let j = 1
+                            for (var i = 0; i < data.length; i++) {
+                                let reqData = data[i]
+                                if (reqData["editorName"] == editorName) {
+                                    let tr = document.createElement("tr")
+                                    tr.setAttribute("style", "height: 15px;")
+
+                                    let td1 = document.createElement("td")
+                                    let td2 = document.createElement("td")
+                                    let td3 = document.createElement("td")
+                                    let td4 = document.createElement("td")
+                                    let td5 = document.createElement("td")
+                                    let td6 = document.createElement("td")
+                                    let td7 = document.createElement("td")
+                                    let td8 = document.createElement("td")
+                                    let td9 = document.createElement("td")
+                                    let td10 = document.createElement("td")
+                                    let td11 = document.createElement("td")
+                                    let td12 = document.createElement("td")
+
+                                    td1.innerHTML = j
+                                    j++
+                                    td1.setAttribute("class", "text-center")
+
+                                    td2.innerHTML = reqData["courseId"]
+                                    td2.setAttribute("class", "text-center")
+                                    td3.innerHTML = reqData["facultyName"]
+                                    td4.innerHTML = reqData["degree"]
+                                    td4.setAttribute("class", "text-center")
+                                    td5.innerHTML = reqData["credits"]
+                                    td5.setAttribute("class", "text-center")
+                                    td6.innerHTML = reqData["durationTarget"]
+                                    td6.setAttribute("class", "text-center")
+                                    td7.innerHTML = reqData["editorName"]
+                                    td8.innerHTML = reqData["preCompletedMinutes"] + "m &nbsp  " + reqData["preCompletedSeconds"] + "s"
+                                    td8.setAttribute("class", "text-center")
+                                    td9.innerHTML = reqData["postCompletedMinutes"] + "m  &nbsp " + reqData["postCompletedSeconds"] + "s"
+                                    td9.setAttribute("class", "text-center")
+                                    td10.innerHTML = reqData["totalCompletedRenderedMinutes"] + "m  &nbsp " + reqData["totalCompletedRenderedSeconds"] + "s"
+                                    td10.setAttribute("class", "text-center")
+
+                                    let span = document.createElement("span")
+                                    span.setAttribute("class", "badge rounded-pill d-inline statusSpan")
+                                    span.innerHTML = reqData["status"]
+                                    td11.setAttribute("class", "text-center")
+                                    td11.appendChild(span)
+
+                                    let button = document.createElement("button")
+                                    button.setAttribute("type", "button")
+                                    button.setAttribute("class", "btn btn-sm btn-rounded")
+                                    button.setAttribute("value", reqData["_id"])
+                                    button.setAttribute("onclick", "deatilView(this.value)")      //----------------------------------------------------------------------
+                                    button.setAttribute("style", "background-color:#ffebc2;")
+                                    button.innerHTML = "Edit"
+                                    td12.setAttribute("class", "text-center")
+                                    td12.appendChild(button)
+
+                                    tr.appendChild(td1)
+                                    tr.appendChild(td2)
+                                    tr.appendChild(td3)
+                                    tr.appendChild(td4)
+                                    tr.appendChild(td5)
+                                    tr.appendChild(td6)
+                                    tr.appendChild(td7)
+                                    tr.appendChild(td8)
+                                    tr.appendChild(td9)
+                                    tr.appendChild(td10)
+                                    tr.appendChild(td11)
+                                    tr.appendChild(td12)
+
+                                    tableBody.appendChild(tr)
+                                }
+                                else { }
+                            }
+                            Swal.fire({
+                                title: 'Finished!',
+                                icon: 'success',
+                                timer: 1000,
+                                showConfirmButton: false
+                            }).then((response) => {
+
+                            })
+                        })
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Select the Editor Name'
+                })
+            }
+        }
+
+        function generateDegreeFilter() {
+            let degree = document.getElementById("degreeSelector").value
+            let semester = document.getElementById("semesterSelector").value
+            let fromDate = ""
+            if (degree != "") {
+                Swal.fire({
+                    title: 'Loading',
+                    text: 'Please wait while we prepare the report for you',
+                    timer: 200,
+                    didOpen: () => {
+                        swal.showLoading();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        fetch("/reports-view", {
+                            headers: { 'Content-Type': "application/json" },
+                            method: "POST",
+                            body: JSON.stringify({ semester: semester }),
+                        }).then(res => res.json()).then((data) => {
+                            let tableHead = document.getElementById("tableHead")
+                            let tableBody = document.getElementById("tableBody")
+                            $("#displayTable").addClass("table-striped")
+                            tableHead.innerHTML = ""
+                            tableBody.innerHTML = ""
+
+                            let headTr = document.createElement("tr")
+                            let th1 = document.createElement("th")
+                            let th2 = document.createElement("th")
+                            let th3 = document.createElement("th")
+                            let th4 = document.createElement("th")
+                            let th5 = document.createElement("th")
+                            let th6 = document.createElement("th")
+                            let th7 = document.createElement("th")
+                            let th8 = document.createElement("th")
+                            let th9 = document.createElement("th")
+                            let th10 = document.createElement("th")
+                            let th11 = document.createElement("th")
+                            let th12 = document.createElement("th")
+
+                            th1.setAttribute("style", "width: 50px;")
+                            th1.setAttribute("class", "text-center")
+                            th1.innerHTML = "Sno"
+                            th2.setAttribute("style", "width: 100px;")
+                            th2.setAttribute("class", "text-center")
+                            th2.innerHTML = "Course Code"
+                            th3.setAttribute("style", "width: 150px;")
+                            th3.setAttribute("class", "text-center")
+                            th3.innerHTML = "Prof Name"
+                            th4.setAttribute("style", "width: 70px;")
+                            th4.setAttribute("class", "text-center")
+                            th4.innerHTML = "Degree"
+                            th5.setAttribute("style", "width: 30px;")
+                            th5.setAttribute("class", "text-center")
+                            th5.innerHTML = "Credits"
+                            th6.setAttribute("style", "width: 70px;")
+                            th6.setAttribute("class", "text-center")
+                            th6.innerHTML = "Target time"
+                            th7.setAttribute("style", "width: 140px;")
+                            th7.setAttribute("class", "text-center")
+                            th7.innerHTML = "Editor Name"
+                            th8.setAttribute("style", "width: 70px;")
+                            th8.setAttribute("class", "text-center")
+                            th8.innerHTML = "Production <br> Mins &nbsp&nbspSec"
+                            th9.setAttribute("style", "width: 80px;")
+                            th9.setAttribute("class", "text-center")
+                            th9.innerHTML = "Post Production <br> Mins &nbsp&nbspSec"
+                            th10.setAttribute("style", "width: 80px;")
+                            th10.setAttribute("class", "text-center")
+                            th10.innerHTML = "LMS  <br> Mins &nbsp&nbspSec"
+                            th11.setAttribute("style", "width: 100px;")
+                            th11.setAttribute("class", "text-center")
+                            th11.innerHTML = "status"
+                            th12.setAttribute("style", "width: 90px;")
+                            th12.setAttribute("class", "text-center")
+                            th12.innerHTML = "Operations"
+
+                            headTr.appendChild(th1)
+                            headTr.appendChild(th2)
+                            headTr.appendChild(th3)
+                            headTr.appendChild(th4)
+                            headTr.appendChild(th5)
+                            headTr.appendChild(th6)
+                            headTr.appendChild(th7)
+                            headTr.appendChild(th8)
+                            headTr.appendChild(th9)
+                            headTr.appendChild(th10)
+                            headTr.appendChild(th11)
+                            headTr.appendChild(th12)
+                            tableHead.appendChild(headTr)
+                            let j = 1
+                            for (var i = 0; i < data.length; i++) {
+                                let reqData = data[i]
+                                if (reqData["degree"] == degree) {
+                                    let tr = document.createElement("tr")
+                                    tr.setAttribute("style", "height: 15px;")
+
+                                    let td1 = document.createElement("td")
+                                    let td2 = document.createElement("td")
+                                    let td3 = document.createElement("td")
+                                    let td4 = document.createElement("td")
+                                    let td5 = document.createElement("td")
+                                    let td6 = document.createElement("td")
+                                    let td7 = document.createElement("td")
+                                    let td8 = document.createElement("td")
+                                    let td9 = document.createElement("td")
+                                    let td10 = document.createElement("td")
+                                    let td11 = document.createElement("td")
+                                    let td12 = document.createElement("td")
+
+                                    td1.innerHTML = j
+                                    j++
+                                    td1.setAttribute("class", "text-center")
+
+                                    td2.innerHTML = reqData["courseId"]
+                                    td2.setAttribute("class", "text-center")
+                                    td3.innerHTML = reqData["facultyName"]
+                                    td4.innerHTML = reqData["degree"]
+                                    td4.setAttribute("class", "text-center")
+                                    td5.innerHTML = reqData["credits"]
+                                    td5.setAttribute("class", "text-center")
+                                    td6.innerHTML = reqData["durationTarget"]
+                                    td6.setAttribute("class", "text-center")
+                                    td7.innerHTML = reqData["editorName"]
+                                    td8.innerHTML = reqData["preCompletedMinutes"] + "m &nbsp  " + reqData["preCompletedSeconds"] + "s"
+                                    td8.setAttribute("class", "text-center")
+                                    td9.innerHTML = reqData["postCompletedMinutes"] + "m  &nbsp " + reqData["postCompletedSeconds"] + "s"
+                                    td9.setAttribute("class", "text-center")
+                                    td10.innerHTML = reqData["totalCompletedRenderedMinutes"] + "m  &nbsp " + reqData["totalCompletedRenderedSeconds"] + "s"
+                                    td10.setAttribute("class", "text-center")
+
+                                    let span = document.createElement("span")
+                                    span.setAttribute("class", "badge rounded-pill d-inline statusSpan")
+                                    span.innerHTML = reqData["status"]
+                                    td11.setAttribute("class", "text-center")
+                                    td11.appendChild(span)
+
+                                    let button = document.createElement("button")
+                                    button.setAttribute("type", "button")
+                                    button.setAttribute("class", "btn btn-sm btn-rounded")
+                                    button.setAttribute("value", reqData["_id"])
+                                    button.setAttribute("onclick", "deatilView(this.value)")      //----------------------------------------------------------------------
+                                    button.setAttribute("style", "background-color:#ffebc2;")
+                                    button.innerHTML = "Edit"
+                                    td12.setAttribute("class", "text-center")
+                                    td12.appendChild(button)
+
+                                    tr.appendChild(td1)
+                                    tr.appendChild(td2)
+                                    tr.appendChild(td3)
+                                    tr.appendChild(td4)
+                                    tr.appendChild(td5)
+                                    tr.appendChild(td6)
+                                    tr.appendChild(td7)
+                                    tr.appendChild(td8)
+                                    tr.appendChild(td9)
+                                    tr.appendChild(td10)
+                                    tr.appendChild(td11)
+                                    tr.appendChild(td12)
+
+                                    tableBody.appendChild(tr)
+                                }
+                                else { }
+                            }
+                            Swal.fire({
+                                title: 'Finished!',
+                                icon: 'success',
+                                timer: 1000,
+                                showConfirmButton: false
+                            }).then((response) => {
+
+                            })
+                        })
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Select the Degree'
+                })
+            }
+        }
+
+        function generateSearchFilter() {
+            let courseId = document.getElementById("searchSelector").value
+            let semester = document.getElementById("semesterSelector").value
+            let fromDate = ""
+            if (courseId != "") {
+                Swal.fire({
+                    title: 'Loading',
+                    text: 'Please wait while we prepare the report for you',
+                    timer: 500,
+                    didOpen: () => {
+                        swal.showLoading();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        fetch("/reports-view", {
+                            headers: { 'Content-Type': "application/json" },
+                            method: "POST",
+                            body: JSON.stringify({ fromDate: fromDate, semester: semester }),
+                        }).then(res => res.json()).then((data) => {
+                            let tableHead = document.getElementById("tableHead")
+                            let tableBody = document.getElementById("tableBody")
+                            $("#displayTable").addClass("table-striped")
+                            tableHead.innerHTML = ""
+                            tableBody.innerHTML = ""
+
+                            let headTr = document.createElement("tr")
+                            let th1 = document.createElement("th")
+                            let th2 = document.createElement("th")
+                            let th3 = document.createElement("th")
+                            let th4 = document.createElement("th")
+                            let th5 = document.createElement("th")
+                            let th6 = document.createElement("th")
+                            let th7 = document.createElement("th")
+                            let th8 = document.createElement("th")
+                            let th9 = document.createElement("th")
+                            let th10 = document.createElement("th")
+                            let th11 = document.createElement("th")
+                            let th12 = document.createElement("th")
+
+                            th1.setAttribute("style", "width: 50px;")
+                            th1.setAttribute("class", "text-center")
+                            th1.innerHTML = "Sno"
+                            th2.setAttribute("style", "width: 100px;")
+                            th2.setAttribute("class", "text-center")
+                            th2.innerHTML = "Course Code"
+                            th3.setAttribute("style", "width: 150px;")
+                            th3.setAttribute("class", "text-center")
+                            th3.innerHTML = "Prof Name"
+                            th4.setAttribute("style", "width: 70px;")
+                            th4.setAttribute("class", "text-center")
+                            th4.innerHTML = "Degree"
+                            th5.setAttribute("style", "width: 30px;")
+                            th5.setAttribute("class", "text-center")
+                            th5.innerHTML = "Credits"
+                            th6.setAttribute("style", "width: 70px;")
+                            th6.setAttribute("class", "text-center")
+                            th6.innerHTML = "Target time"
+                            th7.setAttribute("style", "width: 140px;")
+                            th7.setAttribute("class", "text-center")
+                            th7.innerHTML = "Editor Name"
+                            th8.setAttribute("style", "width: 70px;")
+                            th8.setAttribute("class", "text-center")
+                            th8.innerHTML = "Production <br> Mins &nbsp&nbspSec"
+                            th9.setAttribute("style", "width: 80px;")
+                            th9.setAttribute("class", "text-center")
+                            th9.innerHTML = "Post Production <br> Mins &nbsp&nbspSec"
+                            th10.setAttribute("style", "width: 80px;")
+                            th10.setAttribute("class", "text-center")
+                            th10.innerHTML = "LMS <br> Mins &nbsp&nbspSec"
+                            th11.setAttribute("style", "width: 100px;")
+                            th11.setAttribute("class", "text-center")
+                            th11.innerHTML = "status"
+                            th12.setAttribute("style", "width: 90px;")
+                            th12.setAttribute("class", "text-center")
+                            th12.innerHTML = "Operations"
+
+                            headTr.appendChild(th1)
+                            headTr.appendChild(th2)
+                            headTr.appendChild(th3)
+                            headTr.appendChild(th4)
+                            headTr.appendChild(th5)
+                            headTr.appendChild(th6)
+                            headTr.appendChild(th7)
+                            headTr.appendChild(th8)
+                            headTr.appendChild(th9)
+                            headTr.appendChild(th10)
+                            headTr.appendChild(th11)
+                            headTr.appendChild(th12)
+                            tableHead.appendChild(headTr)
+
+                            for (var i = 0; i < data.length; i++) {
+                                let reqData = data[i]
+                                if (reqData["_id"] == courseId) {
+                                    let tr = document.createElement("tr")
+                                    tr.setAttribute("style", "height: 15px;")
+
+                                    let td1 = document.createElement("td")
+                                    let td2 = document.createElement("td")
+                                    let td3 = document.createElement("td")
+                                    let td4 = document.createElement("td")
+                                    let td5 = document.createElement("td")
+                                    let td6 = document.createElement("td")
+                                    let td7 = document.createElement("td")
+                                    let td8 = document.createElement("td")
+                                    let td9 = document.createElement("td")
+                                    let td10 = document.createElement("td")
+                                    let td11 = document.createElement("td")
+                                    let td12 = document.createElement("td")
+
+                                    td1.innerHTML = 1
+                                    td1.setAttribute("class", "text-center")
+
+                                    td2.innerHTML = reqData["courseId"]
+                                    td2.setAttribute("class", "text-center")
+                                    td3.innerHTML = reqData["facultyName"]
+                                    td4.innerHTML = reqData["degree"]
+                                    td4.setAttribute("class", "text-center")
+                                    td5.innerHTML = reqData["credits"]
+                                    td5.setAttribute("class", "text-center")
+                                    td6.innerHTML = reqData["durationTarget"]
+                                    td6.setAttribute("class", "text-center")
+                                    td7.innerHTML = reqData["editorName"]
+                                    td8.innerHTML = reqData["preCompletedMinutes"] + "m &nbsp  " + reqData["preCompletedSeconds"] + "s"
+                                    td8.setAttribute("class", "text-center")
+                                    td9.innerHTML = reqData["postCompletedMinutes"] + "m  &nbsp " + reqData["postCompletedSeconds"] + "s"
+                                    td9.setAttribute("class", "text-center")
+                                    td10.innerHTML = reqData["totalCompletedRenderedMinutes"] + "m  &nbsp " + reqData["totalCompletedRenderedSeconds"] + "s"
+                                    td10.setAttribute("class", "text-center")
+
+                                    let span = document.createElement("span")
+                                    span.setAttribute("class", "badge rounded-pill d-inline statusSpan")
+                                    span.innerHTML = reqData["status"]
+                                    td11.setAttribute("class", "text-center")
+                                    td11.appendChild(span)
+
+                                    let button = document.createElement("button")
+                                    button.setAttribute("type", "button")
+                                    button.setAttribute("class", "btn btn-sm btn-rounded")
+                                    button.setAttribute("value", reqData["_id"])
+                                    button.setAttribute("onclick", "deatilView(this.value)")      //----------------------------------------------------------------------
+                                    button.setAttribute("style", "background-color:#ffebc2;")
+                                    button.innerHTML = "Edit"
+                                    td12.setAttribute("class", "text-center")
+                                    td12.appendChild(button)
+
+                                    tr.appendChild(td1)
+                                    tr.appendChild(td2)
+                                    tr.appendChild(td3)
+                                    tr.appendChild(td4)
+                                    tr.appendChild(td5)
+                                    tr.appendChild(td6)
+                                    tr.appendChild(td7)
+                                    tr.appendChild(td8)
+                                    tr.appendChild(td9)
+                                    tr.appendChild(td10)
+                                    tr.appendChild(td11)
+                                    tr.appendChild(td12)
+
+                                    tableBody.appendChild(tr)
+                                }
+                                else { }
+                            }
+                            Swal.fire({
+                                title: 'Finished!',
+                                icon: 'success',
+                                timer: 1000,
+                                showConfirmButton: false
+                            }).then((response) => {
+
+                            })
+                        })
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Select a Course'
+                })
+            }
+        }
+
+        function deatilView(id) {
+            method = 'post';
+
+            var form = document.createElement('form');
+            form.setAttribute('method', method);
+            form.setAttribute('action', "/detail-report-view");
+
+            var hiddenField = document.createElement('input');
+            hiddenField.setAttribute('type', 'hidden');
+            hiddenField.setAttribute('name', "id");
+            hiddenField.setAttribute('value', id);
+
+            var hiddenField1 = document.createElement('input');
+            hiddenField1.setAttribute('type', 'hidden');
+            hiddenField1.setAttribute('name', "flag");
+            hiddenField1.setAttribute('value', true);
+
+            form.appendChild(hiddenField);
+            form.appendChild(hiddenField1);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function generateDbBackup() {
+            fetch("/generate-db-backup", {
+                headers: { 'Content-Type': "application/json" },
+                method: "POST",
+                body: JSON.stringify({}),
+            }).then(res => res.json()).then((data) => {
+                Swal.fire(
+                    'Backup Created',
+                    'Backup created Successfully!',
+                    'success'
+                )
+            })
+        }
+
+        function generateStatistics() {
+            let semester = document.getElementById("semesterSelector").value
+            $("#tableHead").empty()
+            $("#tableBody").empty()
+            $("#displayTable").removeClass("table-striped")
+            $("#tableHead").append(`
+                <tr>
+                    <th style="width: 20px;" class="text-center">Sno</th>
+                    <th style="width: 100px;" class="text-center">Degree</th>
+                    <th style="width: 350px;" class="text-center">Course Name</th>
+                    <th style="width: 350px;" class="text-center">Production</th>
+                    <th style="width: 350px;" class="text-center">Post Production</th>
+                    <th style="width: 350px;" class="text-center">LMS</th>
+                </tr>
+            `)
+
+            let fromDate = ""
+            fetch("/reports-view", {
+                headers: { 'Content-Type': "application/json" },
+                method: "POST",
+                body: JSON.stringify({ semester: semester }),
+            }).then(res => res.json()).then((data) => {
+                for (var i = 0; i < data.length; i++) {
+                    let reqData = data[i]
+
+                    let target = parseInt(reqData["durationTarget"])
+                    let production = parseInt((parseInt(reqData["preCompletedMinutes"]) / target) * 100)
+                    let postProduction = parseInt((parseInt(reqData["postCompletedMinutes"]) / target) * 100)
+                    let lms = parseInt((parseInt(reqData["totalCompletedRenderedMinutes"]) / target) * 100)
+                    let productionColor = ""
+                    let postProductionColor = ""
+                    let lmsColor = ""
+
+                    if (production > 100) { production = 100 }
+                    if (postProduction > 100) { postProduction = 100 }
+                    if (lms > 100) { lms = 100 }
+
+                    if (production == 0) { productionColor = "bg-danger" }
+                    else if (production <= 25) { productionColor = "bg-danger" }
+                    else if (production <= 50) { productionColor = "bg-warning" }
+                    else if (production <= 75) { productionColor = "bg-info" }
+                    else { productionColor = "bg-success" }
+
+                    if (postProduction == 0) { postProductionColor = "bg-danger" }
+                    else if (postProduction <= 25) { postProductionColor = "bg-danger" }
+                    else if (postProduction <= 50) { postProductionColor = "bg-warning" }
+                    else if (postProduction <= 75) { postProductionColor = "bg-info" }
+                    else { postProductionColor = "bg-success" }
+
+                    if (lms == 0) { lmsColor = "bg-danger" }
+                    else if (lms <= 25) { lmsColor = "bg-danger" }
+                    else if (lms <= 50) { lmsColor = "bg-warning" }
+                    else if (lms <= 75) { lmsColor = "bg-info" }
+                    else { lmsColor = "bg-success" }
+
+                    $("#tableBody").append(`
+                        <tr>
+                            <td class="text-center">${i + 1}</td>
+                            <td class="text-center">${reqData["degree"]}</td>
+                            <td>${reqData["courseName"]}</td>
+                            <td>
+                                <div class="progress m-1 ">
+                                    <div class="progress-bar progress-bar-striped ${productionColor}" role="progressbar"
+                                        style="width: ${production}%" aria-valuenow="${production}" aria-valuemin="0" aria-valuemax="100">${production}%</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="progress m-1">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated  ${postProductionColor}" role="progressbar"
+                                        style="width: ${postProduction}%" aria-valuenow="${postProduction}" aria-valuemin="0" aria-valuemax="100">${postProduction}%</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="progress m-1">
+                                    <div class="progress-bar progress-bar-striped  ${lmsColor}" role="progressbar" style="width: ${lms}%"
+                                        aria-valuenow="${lms}" aria-valuemin="0" aria-valuemax="100">${lms}%</div>
+                                </div>
+                            </td>
+                        </tr>
+                    `)
+
+                }
+                Swal.fire({
+                    title: 'Finished!',
+                    icon: 'success',
+                    timer: 1000,
+                    showConfirmButton: false
+                }).then((response) => {
+
+                })
+            })
+        }
+
+        function exportToExcel() {
+            if (exportData.length != 0) {
+                fetch("/export-to-excel", {
+                    headers: { 'Content-Type': "application/json" },
+                    method: "POST",
+                    body: JSON.stringify({ data: exportData }),
+                }).then(res => res.json()).then(async (data) => {
+                    await downloadFile(data.path, "Report-" + data.facultyId + "-" + new Date().getTime())
+                    Swal.fire({
+                        title: 'Excel Report Generated',
+                        icon: 'success',
+                        timer: 1000,
+                        showConfirmButton: false
+                    })
+
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'No reports Generated!'
+                })
+            }
+        }
+
+        function downloadFile(path, name) {
+            var link = document.createElement("a");
+            link.setAttribute('download', name);
+            link.setAttribute("target", "_blank")
+            link.href = path;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+
+
+    </script>
+</body>
+
+</html>

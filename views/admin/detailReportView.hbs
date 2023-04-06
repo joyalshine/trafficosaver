@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/styleDetailReportView.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="overlay" onclick="off()"></div>
+    <header class="text-center" id="preProductionHomeHeader">
+        <div class="">
+            <img src="https://vit.ac.in/files/gravitas19/images/vit_white.png" id="preProductionHomeLogo" alt="">
+        </div>
+        <div class="topright">
+            <a href="" style="text-decoration: none; color:#fff">
+                <img src="https://cdn-icons-png.flaticon.com/128/3237/3237472.png" width="40" height="40" alt="">
+                {{user.facultyName}}
+            </a>
+        </div>
+    </header>
+    <div class="containerMain">
+        <a href="#" class="toggleBox">
+            <span class="icon"></span>
+        </a>
+        <ul class="navItems">
+            <li>
+                <a href="/admin-home">
+                    <i class="fa fa-home" style="--i:1"></i>
+                    <span style="--g:1">home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/course-add-form">
+                    <i class="fa fa-user" style="--i:2"></i>
+                    <span style="--g:2">Add course</span>
+                </a>
+            </li>
+            <li>
+                <a href="/reports-view">
+                    <i class="fa fa-folder" style="--i:3"></i>
+                    <span style="--g:3">reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-password-change">
+                    <i class="fa-solid fa-file-circle-check" style="--i:4"></i>
+                    <span style="--g:4">Database management</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-view">
+                    <i class="fa-solid fa-calendar-days" style="--i:5"></i>
+                    <span style="--g:5">shedule</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-booking">
+                    <i class="fa-solid fa-calendar-days" style="--i:6"></i>
+                    <span style="--g:6">shedule Booking</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fa fa-globe" style="--i:7"></i>
+                    <span style="--g:7">logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <section id="menuSection" class="container" style="background-color: rgb(226 226 226);border-radius: 1rem;">
+        <div class="row p-2" style="display: flex;justify-content: space-evenly;">
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="courseDetails()">Course Details</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generateCoursePlan()">Course Plan</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generatePreFormDetails()">Pre Forms</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generatePostFormDetails()">Post Forms</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generateDeniedDetails()">Status Denied</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generateDeniedHistory()">Denied History</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generateRoughCutDetails()">Rough Cuts</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generateReshootDetails()">Reshoots</button>
+            </div>
+            <div class="col-auto m-1">
+                <button type="button" class="btn btn-primary" onclick="generateReshootHistoryDetails()">Reshoot
+                    History</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="tableSection" class="table-responsive-lg p-4">
+
+    </section>
+    <section class="text-center mt-5 hide" id="addMessage">
+        <span style="font-size: 20px;">No Data available..</span>
+    </section>
+
+    <input type="hidden" value="{{id}}" id="courseId">
+
+    <script>
+        var toggleClick = document.querySelector(".toggleBox");
+        var containerMain = document.querySelector(".containerMain");
+        var overlayScreen = document.querySelector(".overlay");
+
+        toggleClick.addEventListener('click', () => {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        })
+
+        function off() {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        }
+
+        let globalData = ""
+        window.onload = loadData
+
+        function loadData() {
+            let courseId = document.getElementById("courseId").value
+            fetch("/detail-report-view", {
+                headers: { 'Content-Type': "application/json" },
+                method: "POST",
+                body: JSON.stringify({ flag: false, id: courseId }),
+            }).then(res => res.json()).then((data) => {
+                globalData = data
+                console.log(globalData)
+            })
+        }
+
+        function courseDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let basicDisplay = document.getElementById("tableSection")
+            basicDisplay.innerHTML = ""
+            let rowDiv = document.createElement("div")
+            let colDiv = document.createElement("div")
+            let table = document.createElement("table")
+            let tableBody = document.createElement("tbody")
+
+            rowDiv.setAttribute("class", "row")
+            rowDiv.setAttribute("style", "display: grid; justify-content: center;")
+
+            colDiv.setAttribute("class", "col-lg-12")
+
+            table.setAttribute("class", "table table-hover table-borderless")
+
+            let heads = ["courseName", "courseId", "facultyName", "facultyId", "facultyPhoneNumber","facultyEmail", "degree", "credits", "durationTarget", "editorName", "preProducerName", "courseCreatedTime", "preCompletedDuration", "postCompletedDuration", "totalCompletedRenderedVideos", "status"]
+            let displayHeads = ["Course Name", "Course ID", "Faculty Name", "Faculty ID", "Faculty Phone no.","Faculty Email", "Degree", "Credits", "Duration Target", "Editor Name", "Producer Name", "Course Created Time", "Pre Completed Duration", "Post Completed Duration", "Rendered Videos", "Status"]
+
+            for (var i = 0; i < 16; i++) {
+                let tr = document.createElement("tr")
+                let th = document.createElement("th")
+                let td = document.createElement("td")
+
+                th.innerHTML = displayHeads[i]
+                if (heads[i] == "courseCreatedTime") {
+                    let date = globalData[heads[i]]
+                    td.innerHTML = new Date(date).toGMTString()
+                }
+                else if (heads[i] == "preCompletedDuration") {
+                    td.innerHTML = globalData["preCompletedMinutes"] + "m " + globalData["preCompletedSeconds"] + "s"
+                }
+                else if (heads[i] == "postCompletedDuration") {
+                    td.innerHTML = globalData["postCompletedMinutes"] + "m " + globalData["postCompletedSeconds"] + "s"
+                }
+                else if (heads[i] == "totalCompletedRenderedVideos") {
+                    td.innerHTML = globalData["totalCompletedRenderedMinutes"] + "m " + globalData["totalCompletedRenderedSeconds"] + "s"
+                }
+                else {
+                    td.innerHTML = globalData[heads[i]]
+                }
+
+                tr.appendChild(th)
+                tr.appendChild(td)
+
+                tableBody.appendChild(tr)
+            }
+
+            table.appendChild(tableBody)
+            colDiv.appendChild(table)
+            rowDiv.appendChild(colDiv)
+            basicDisplay.appendChild(rowDiv)
+        }
+
+
+        function generateCoursePlan() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let coursePlan = globalData.coursePlan
+            let links = globalData.postTopicsCompleted
+            let individualStatus = globalData.individualStatus
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+            if (coursePlan) {
+                console.log(coursePlan)
+                let table = document.createElement("table")
+                let tableHead = document.createElement("thead")
+                let tableBody = document.createElement("tbody")
+
+                table.setAttribute("class", "table table-sm table-bordered table-striped")
+                table.setAttribute("style", "table-layout: fixed;")
+
+                let htr = document.createElement("tr")
+                let th1 = document.createElement("th")
+                let th2 = document.createElement("th")
+                let th3 = document.createElement("th")
+                let th4 = document.createElement("th")
+                let th5 = document.createElement("th")
+                let th6 = document.createElement("th")
+                let th7 = document.createElement("th")
+
+                th1.setAttribute("class", "text-center")
+                th1.setAttribute("style", "width: 30px;")
+                th1.innerHTML = "W#"
+                th2.setAttribute("class", "text-center")
+                th2.setAttribute("style", "width: 50px;")
+                th2.innerHTML = "Week Title"
+                th3.setAttribute("class", "text-center")
+                th3.setAttribute("style", "width: 30px;")
+                th3.innerHTML = "Sno"
+                th4.setAttribute("class", "text-center")
+                th4.setAttribute("style", "width: 150px;")
+                th4.innerHTML = "Topic"
+                th5.setAttribute("class", "text-center")
+                th5.setAttribute("style", "width: 120px;")
+                th5.innerHTML = "Youtube Link"
+                th7.setAttribute("class", "text-center")
+                th7.setAttribute("style", "width: 40px;")
+                th7.innerHTML = "Duration"
+                th6.setAttribute("class", "text-center")
+                th6.setAttribute("style", "width: 100px;")
+                th6.innerHTML = "Status"
+
+                htr.appendChild(th1)
+                htr.appendChild(th2)
+                htr.appendChild(th3)
+                htr.appendChild(th4)
+                htr.appendChild(th5)
+                htr.appendChild(th7)
+                htr.appendChild(th6)
+
+                tableHead.appendChild(htr)
+
+                let n = 1
+
+                let trIntro = document.createElement("tr")
+                let td1Intro = document.createElement("td")
+                let td2Intro = document.createElement("td")
+                let td3Intro = document.createElement("td")
+                let td4Intro = document.createElement("td")
+                let td5Intro = document.createElement("td")
+                let td6Intro = document.createElement("td")
+                let td7Intro = document.createElement("td")
+                let urlIntro = document.createElement("a")
+                let badgeIntro = document.createElement("span")
+
+                td4Intro.innerHTML = "Course Introduction"
+
+                if (links["intro"]) {
+                    urlIntro.setAttribute("href", links["intro"]["videoLink"])
+                    urlIntro.setAttribute("style", "text-decoration: none;")
+                    urlIntro.setAttribute("target", "_blank")
+                    urlIntro.innerHTML = links["intro"]["videoLink"]
+                    td7Intro.innerHTML = links["intro"]["duration"].split(":")[0] + "m " + links["intro"]["duration"].split(":")[1] + "s"
+                } else {
+                    urlIntro.innerHTML = ""
+                }
+
+
+                td6Intro.setAttribute("class", "text-center")
+                td7Intro.setAttribute("class", "text-center")
+
+                if (individualStatus["intro"] == "pending") {
+                    badgeIntro.setAttribute("class", "badge rounded-pill d-inline")
+                    badgeIntro.setAttribute("style", "color: #fff; background-color: #ffc107")
+                    badgeIntro.innerHTML = "Pending"
+                }
+                else if (individualStatus["intro"] == "confirmed") {
+                    badgeIntro.setAttribute("class", "badge rounded-pill d-inline")
+                    badgeIntro.setAttribute("style", "color: #fff; background-color: #28a745")
+                    badgeIntro.innerHTML = "Confirmed"
+                }
+                else if (individualStatus["intro"] == "denied") {
+                    badgeIntro.setAttribute("class", "badge badge-pill badge-danger")
+                    badgeIntro.setAttribute("style", "color: #fff; background-color: #dc3545")
+                    badgeIntro.innerHTML = "Denied"
+                }
+                else if (individualStatus["intro"] == "editing") {
+                    badgeIntro.setAttribute("class", "badge rounded-pill d-inline")
+                    badgeIntro.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                    badgeIntro.innerHTML = "Editing"
+                }
+                else if (individualStatus["intro"] == "reshoot") {
+                    badgeIntro.setAttribute("class", "badge rounded-pill d-inline")
+                    badgeIntro.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                    badgeIntro.innerHTML = "Reshoot"
+                }
+                else {
+                    badgeIntro.setAttribute("class", "badge rounded-pill d-inline")
+                    badgeIntro.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                    badgeIntro.innerHTML = "Production"
+                }
+
+                trIntro.appendChild(td1Intro)
+                trIntro.appendChild(td2Intro)
+                trIntro.appendChild(td3Intro)
+                trIntro.appendChild(td4Intro)
+                td5Intro.appendChild(urlIntro)
+                trIntro.appendChild(td5Intro)
+                trIntro.appendChild(td7Intro)
+                td6Intro.appendChild(badgeIntro)
+                trIntro.appendChild(td6Intro)
+
+                tableBody.appendChild(trIntro)
+
+                table.appendChild(tableHead)
+                table.appendChild(tableBody)
+                display.appendChild(table)
+
+                while (n <= parseInt(coursePlan.weeks)) {
+                    let W = "W" + n
+                    let t = 0
+                    let firstPrint = "undone"
+                    for (var i = 1; i <= 10; i++) {          //----------code not complete only temporary
+                        let key = W + "-" + i
+
+                        if (coursePlan[key] == null) {
+                            continue
+                        }
+                        t++
+                        let link = links[key]
+                        let tr = document.createElement("tr")
+                        let td1 = document.createElement("td")
+                        let td2 = document.createElement("td")
+                        let td3 = document.createElement("td")
+                        let td4 = document.createElement("td")
+                        let td5 = document.createElement("td")
+                        let td7 = document.createElement("td")
+                        let url = document.createElement("a")
+                        let badge = document.createElement("span")
+                        if (firstPrint == "undone") {
+                            firstPrint = "done"
+                            let td6 = document.createElement("td")
+
+                            td1.setAttribute("rowspan", "7")
+                            td1.setAttribute("class", "text-center align-middle")
+                            td1.setAttribute("id", "id" + W)
+                            td1.innerHTML = W
+
+                            td2.setAttribute("rowspan", "7")
+                            td2.setAttribute("class", "text-center align-middle")
+                            td2.setAttribute("id", "id" + W + "Title")
+                            td2.innerHTML = coursePlan[W]
+
+                            td3.setAttribute("class", "text-center")
+                            td3.innerHTML = i
+
+                            td4.innerHTML = coursePlan[key]
+                            td4.setAttribute("id", key + "Topic")
+
+                            if (link) {
+                                url.setAttribute("href", link["videoLink"])
+                                url.setAttribute("style", "text-decoration: none;")
+                                url.setAttribute("target", "_blank")
+                                url.innerHTML = link["videoLink"]
+                                td7.innerHTML = link["duration"].split(":")[0] + "m " + link["duration"].split(":")[1] + "s"
+                            } else {
+                                url.innerHTML = ""
+                            }
+
+                            td7.setAttribute("class", "text-center")
+                            td6.setAttribute("class", "text-center align-middle")
+
+                            if (individualStatus[key] == "pending") {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #ffc107")
+                                badge.innerHTML = "Pending"
+                            }
+                            else if (individualStatus[key] == "confirmed") {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #28a745")
+                                badge.innerHTML = "Confirmed"
+                            }
+                            else if (individualStatus[key] == "denied") {
+                                badge.setAttribute("class", "badge badge-pill badge-danger")
+                                badge.setAttribute("style", "color: #fff; background-color: #dc3545")
+                                badge.innerHTML = "Denied"
+                            }
+                            else if (individualStatus[key] == "editing") {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                                badge.innerHTML = "Editing"
+                            }
+                            else if (individualStatus[key] == "editing") {
+                                badgeIntro.setAttribute("class", "badge rounded-pill d-inline")
+                                badgeIntro.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                                badgeIntro.innerHTML = "Editing"
+                            }
+                            else {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                                badge.innerHTML = "Production"
+                            }
+
+                            tr.appendChild(td1)
+                            tr.appendChild(td2)
+                            tr.appendChild(td3)
+                            tr.appendChild(td4)
+                            td5.appendChild(url)
+                            tr.appendChild(td5)
+                            tr.append(td7)
+                            td6.appendChild(badge)
+                            tr.appendChild(td6)
+                        }
+                        else {
+                            td1.setAttribute("class", "text-center")
+                            td1.innerHTML = i
+
+                            td2.innerHTML = coursePlan[key]
+                            td2.setAttribute("id", key + "Topic")
+
+                            if (link) {
+                                url.setAttribute("href", link["videoLink"])
+                                url.setAttribute("style", "text-decoration: none;")
+                                url.innerHTML = link["videoLink"]
+                                td7.innerHTML = link["duration"].split(":")[0] + "m " + link["duration"].split(":")[1] + "s"
+                            } else {
+                                url.innerHTML = ""
+                            }
+
+                            td7.setAttribute("class", "text-center")
+                            td4.setAttribute("class", "text-center align-middle")
+
+                            if (individualStatus[key] == "pending") {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #ffc107")
+                                badge.innerHTML = "Pending"
+                            }
+                            else if (individualStatus[key] == "confirmed") {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #28a745")
+                                badge.innerHTML = "Confirmed"
+                            }
+                            else if (individualStatus[key] == "denied") {
+                                badge.setAttribute("class", "badge badge-pill badge-danger")
+                                badge.setAttribute("style", "color: #fff; background-color: #dc3545")
+                                badge.innerHTML = "Denied"
+                            }
+                            else {
+                                badge.setAttribute("class", "badge rounded-pill d-inline")
+                                badge.setAttribute("style", "color: #fff; background-color: #17a2b8")
+                                badge.innerHTML = "Production"
+                            }
+
+                            tr.appendChild(td1)
+                            tr.appendChild(td2)
+                            td3.appendChild(url)
+                            tr.appendChild(td3)
+                            tr.appendChild(td7)
+                            td4.appendChild(badge)
+                            tr.appendChild(td4)
+                        }
+                        tableBody.appendChild(tr)
+                    }
+                    n++;
+                    let changeRowSpanWeekNo = document.getElementById("id" + W)
+                    let changeRowSpanWeekTitle = document.getElementById("id" + W + "Title")
+                    if (changeRowSpanWeekNo != null) {
+                        changeRowSpanWeekNo.setAttribute("rowspan", t)
+                        changeRowSpanWeekTitle.setAttribute("rowspan", t)
+                    }
+                    else {
+                        break
+                    }
+                }
+
+            }
+            else {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+
+
+        }
+
+        function generatePreFormDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let courseView = globalData
+            let recordedDates = courseView.recordedDates.sort()
+            if (recordedDates) {
+                let table = document.createElement("table")
+                let tableHead = document.createElement("thead")
+                let tableBody = document.createElement("tbody")
+
+                table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+                let th1 = document.createElement("th")
+                let th2 = document.createElement("th")
+                let th3 = document.createElement("th")
+
+                th1.setAttribute("class", "text-center align-middle")
+                th1.setAttribute("style", "width: 100px;")
+                th1.setAttribute("scope", "row")
+                th1.innerText = "Date"
+                th2.setAttribute("class", "text-center align-middle")
+                th2.setAttribute("style", "width: 150px;")
+                th2.setAttribute("scope", "row")
+                th2.innerText = "Properties"
+                th3.setAttribute("class", "text-center align-middle")
+                th3.setAttribute("style", "width: 200px;")
+                th3.setAttribute("scope", "row")
+                th3.innerText = "Details"
+
+                tableHead.appendChild(th1)
+                tableHead.appendChild(th2)
+                tableHead.appendChild(th3)
+
+                table.appendChild(tableHead)
+                table.appendChild(tableBody)
+                display.appendChild(table)
+
+                let n = 0
+
+                while (n < parseInt(recordedDates.length)) {
+                    for (var i = 0; i < 2; i++) {
+                        let currData = courseView[recordedDates[n]]
+                        let tr = document.createElement("tr")
+                        let th = document.createElement("th")
+                        let th1 = document.createElement("th")
+                        let td = document.createElement("td")
+                        let str = ""
+                        if (i == 0) {
+                            th.setAttribute("rowspan", "3")
+                            th.setAttribute("class", "text-center align-middle")
+                            th.innerHTML = recordedDates[n]
+
+                            th1.setAttribute("scope", "row")
+                            th1.setAttribute("class", "align-middle")
+                            th1.innerHTML = "Paths"
+
+                            for (var x = 0; x < currData["paths"].length; x++) {
+                                str = str + currData["paths"][x] + "<br>"
+                            }
+                            td.innerHTML = str
+
+                            tr.appendChild(th)
+                            tr.appendChild(th1)
+                            tr.appendChild(td)
+
+                            tableBody.appendChild(tr)
+                        }
+                        else {
+                            th.setAttribute("scope", "row")
+                            th.innerHTML = "Minutes Recorded"
+
+                            td.innerHTML = currData["minutesRecorded"]
+
+                            let tr1 = document.createElement("tr")
+                            let td1 = document.createElement("td")
+
+                            th1.setAttribute("scope", "row")
+                            th1.innerHTML = "Remarks"
+
+                            td1.innerHTML = currData["preRemarks"]
+
+                            let tr2 = document.createElement("tr")
+                            let td2 = document.createElement("td")
+
+                            tr2.setAttribute("class", "table-primary")
+                            td2.setAttribute("colspan", "3")
+
+                            tr.appendChild(th)
+                            tr.appendChild(td)
+
+                            tr1.appendChild(th1)
+                            tr1.appendChild(td1)
+
+                            tr2.appendChild(td2)
+
+                            tableBody.appendChild(tr)
+                            tableBody.appendChild(tr1)
+                            tableBody.appendChild(tr2)
+                        }
+                    }
+                    n++;
+                }
+            }
+            else {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+
+        function generatePostFormDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let courseView = globalData
+            let postTopicsCompleted = courseView.postTopicsCompleted
+            let keys = Object.keys(postTopicsCompleted)
+            if (keys) {
+                let table = document.createElement("table")
+                let tableHead = document.createElement("thead")
+                let tableBody = document.createElement("tbody")
+
+                table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+                let th1 = document.createElement("th")
+                let th2 = document.createElement("th")
+                let th3 = document.createElement("th")
+
+                th1.setAttribute("class", "text-center align-middle")
+                th1.setAttribute("style", "width: 100px;")
+                th1.setAttribute("scope", "row")
+                th1.innerText = "Topic"
+                th2.setAttribute("class", "text-center align-middle")
+                th2.setAttribute("style", "width: 150px;")
+                th2.setAttribute("scope", "row")
+                th2.innerText = "Properties"
+                th3.setAttribute("class", "text-center align-middle")
+                th3.setAttribute("style", "width: 200px;")
+                th3.setAttribute("scope", "row")
+                th3.innerText = "Details"
+
+                tableHead.appendChild(th1)
+                tableHead.appendChild(th2)
+                tableHead.appendChild(th3)
+
+                table.appendChild(tableHead)
+                table.appendChild(tableBody)
+                display.appendChild(table)
+
+                let n = 0
+
+                while (n < parseInt(keys.length)) {
+                    for (var i = 0; i < 2; i++) {
+                        let currData = postTopicsCompleted[keys[n]]
+                        let tr = document.createElement("tr")
+                        let th = document.createElement("th")
+                        let th1 = document.createElement("th")
+                        let td = document.createElement("td")
+                        let str = ""
+                        if (i == 0) {
+                            th.setAttribute("rowspan", "3")
+                            th.setAttribute("class", "text-center align-middle")
+                            th.innerHTML = keys[n]
+
+                            th1.setAttribute("scope", "row")
+                            th1.setAttribute("class", "align-middle")
+                            th1.innerHTML = "Video Link"
+
+                            td.innerHTML = currData["videoLink"]
+
+                            tr.appendChild(th)
+                            tr.appendChild(th1)
+                            tr.appendChild(td)
+
+                            tableBody.appendChild(tr)
+                        }
+                        else {
+                            th.setAttribute("scope", "row")
+                            th.innerHTML = "Edited Video Path"
+
+                            td.innerHTML = currData["postPath"]
+
+                            let tr1 = document.createElement("tr")
+                            let td1 = document.createElement("td")
+
+
+                            let th3 = document.createElement("th")
+                            let tr3 = document.createElement("tr")
+                            let td3 = document.createElement("td")
+                            th3.setAttribute("scope", "row")
+                            th3.innerHTML = "Duration"
+                            td3.innerHTML = currData["duration"]
+
+                            let tr2 = document.createElement("tr")
+                            let td2 = document.createElement("td")
+
+                            tr2.setAttribute("class", "table-primary")
+                            td2.setAttribute("colspan", "3")
+
+                            tr.appendChild(th)
+                            tr.appendChild(td)
+
+                            tr3.appendChild(th3)
+                            tr3.appendChild(td3)
+
+                            tr2.appendChild(td2)
+
+                            tableBody.appendChild(tr)
+
+                            tableBody.appendChild(tr3)
+                            tableBody.appendChild(tr2)
+                        }
+                    }
+                    n++;
+                }
+            }
+            else {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+
+        function generateDeniedDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let table = document.createElement("table")
+            let tableHead = document.createElement("thead")
+            let tableBody = document.createElement("tbody")
+
+            table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+            let th1 = document.createElement("th")
+            let th2 = document.createElement("th")
+            let th3 = document.createElement("th")
+
+            th1.setAttribute("class", "text-center align-middle")
+            th1.setAttribute("style", "width: 100px;")
+            th1.setAttribute("scope", "row")
+            th1.innerText = "Topic"
+            th2.setAttribute("class", "text-center align-middle")
+            th2.setAttribute("style", "width: 150px;")
+            th2.setAttribute("scope", "row")
+            th2.innerText = "Properties"
+            th3.setAttribute("class", "text-center align-middle")
+            th3.setAttribute("style", "width: 200px;")
+            th3.setAttribute("scope", "row")
+            th3.innerText = "Details"
+
+            tableHead.appendChild(th1)
+            tableHead.appendChild(th2)
+            tableHead.appendChild(th3)
+
+            table.appendChild(tableHead)
+            table.appendChild(tableBody)
+            display.appendChild(table)
+
+            let statusDenied = globalData.statusDenied
+            let dates = globalData.preTopicsCompleted
+            let keys = Object.keys(statusDenied).sort()
+            let n = 0
+
+            while (n < keys.length) {
+                for (var i = 0; i < 2; i++) {
+                    let currData = statusDenied[keys[n]]
+                    let tr = document.createElement("tr")
+                    let th = document.createElement("th")
+                    let th1 = document.createElement("th")
+                    let td = document.createElement("td")
+                    let str = ""
+                    if (i == 0) {
+
+                        th.setAttribute("rowspan", "4")
+                        th.setAttribute("class", "text-center align-middle")
+                        th.innerHTML = keys[n]
+
+                        th1.setAttribute("scope", "row")
+                        th1.setAttribute("class", "align-middle")
+                        th1.innerHTML = "Feedback"
+
+                        td.innerHTML = currData["feedback"]
+
+                        tr.appendChild(th)
+                        tr.appendChild(th1)
+                        tr.appendChild(td)
+
+                        tableBody.appendChild(tr)
+                    }
+                    else {
+                        th.setAttribute("scope", "row")
+                        th.innerHTML = "Cuts"
+
+                        td.innerHTML = currData["cuts"]
+
+                        let tr1 = document.createElement("tr")
+                        let td1 = document.createElement("td")
+
+                        th1.setAttribute("scope", "row")
+                        th1.innerHTML = "Edits"
+
+                        td1.innerHTML = currData["edits"]
+
+                        let tr3 = document.createElement("tr")
+                        let td3 = document.createElement("td")
+                        let th3 = document.createElement("th")
+
+                        th3.setAttribute("scope", "row")
+                        th3.innerHTML = "Recorded Date"
+
+                        td3.innerHTML = dates[keys[n]]
+
+                        let tr2 = document.createElement("tr")
+                        let td2 = document.createElement("td")
+
+                        tr2.setAttribute("class", "table-danger")
+                        td2.setAttribute("colspan", "3")
+
+                        tr.appendChild(th)
+                        tr.appendChild(td)
+
+                        tr1.appendChild(th1)
+                        tr1.appendChild(td1)
+
+                        tr3.appendChild(th3)
+                        tr3.appendChild(td3)
+
+                        tr2.appendChild(td2)
+
+                        tableBody.appendChild(tr)
+                        tableBody.appendChild(tr1)
+                        tableBody.appendChild(tr3)
+                        tableBody.appendChild(tr2)
+                    }
+                }
+                n++;
+            }
+            if (keys.length == 0) {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+
+        function generateDeniedHistory() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let table = document.createElement("table")
+            let tableHead = document.createElement("thead")
+            let tableBody = document.createElement("tbody")
+
+            table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+            let th1 = document.createElement("th")
+            let th2 = document.createElement("th")
+            let th3 = document.createElement("th")
+            let th4 = document.createElement("th")
+
+            th1.setAttribute("class", "text-center align-middle")
+            th1.setAttribute("style", "width: 100px;")
+            th1.setAttribute("scope", "row")
+            th1.innerText = "Topic"
+            th2.setAttribute("class", "text-center align-middle")
+            th2.setAttribute("style", "width: 20px;")
+            th2.setAttribute("scope", "row")
+            th2.innerText = "Count"
+            th3.setAttribute("class", "text-center align-middle")
+            th3.setAttribute("style", "width: 150px;")
+            th3.setAttribute("scope", "row")
+            th3.innerText = "Properties"
+            th4.setAttribute("class", "text-center align-middle")
+            th4.setAttribute("style", "width: 200px;")
+            th4.setAttribute("scope", "row")
+            th4.innerText = "Details"
+
+            tableHead.appendChild(th1)
+            tableHead.appendChild(th2)
+            tableHead.appendChild(th3)
+            tableHead.appendChild(th4)
+
+            table.appendChild(tableHead)
+            table.appendChild(tableBody)
+            display.appendChild(table)
+
+            let deniedHistory = globalData.deniedHistory
+            let keys = Object.keys(deniedHistory).sort()
+            let n = 0
+
+            while (n < keys.length) {
+                console.log(keys.length)
+                let currData = deniedHistory[keys[n]]
+                console.log(keys)
+                let count = parseInt(currData.count)
+                for (var i = 0; i < 2; i++) {
+                    let tr = document.createElement("tr")
+                    let th = document.createElement("th")
+                    let th1 = document.createElement("th")
+                    let th2 = document.createElement("th")
+                    let td = document.createElement("td")
+                    if (i == 0) {
+                        th.setAttribute("rowspan", 5 * count)
+                        th.setAttribute("class", "text-center align-middle")
+                        th.innerHTML = keys[n]
+
+                        th1.setAttribute("scope", "row")
+                        th1.setAttribute("rowspan", "5")
+                        th1.setAttribute("class", "align-middle text-center")
+                        th1.innerHTML = "1"
+
+                        th2.setAttribute("scope", "row")
+                        th2.setAttribute("class", "align-middle")
+                        th2.innerHTML = "FeedBack"
+
+                        td.innerHTML = currData[1]["feedback"]
+
+                        tr.appendChild(th)
+                        tr.appendChild(th1)
+                        tr.appendChild(th2)
+                        tr.appendChild(td)
+
+                        tableBody.appendChild(tr)
+                    }
+                    else {
+                        th.setAttribute("scope", "row")
+                        th.innerHTML = "Cuts"
+
+                        td.innerHTML = currData[1]["cuts"]
+
+                        let tr1 = document.createElement("tr")
+                        let td1 = document.createElement("td")
+
+                        th1.setAttribute("scope", "row")
+                        th1.innerHTML = "Edits"
+
+                        td1.innerHTML = currData[1]["edits"]
+
+                        let tr3 = document.createElement("tr")
+                        let td3 = document.createElement("td")
+                        let th3 = document.createElement("th")
+
+                        th3.setAttribute("scope", "row")
+                        th3.innerHTML = "Denied On"
+
+                        td3.innerHTML = currData[1]["timestamp"]
+
+                        let tr2 = document.createElement("tr")
+                        let td2 = document.createElement("td")
+
+                        let tr4 = document.createElement("tr")
+                        let td4 = document.createElement("td")
+                        let th4 = document.createElement("th")
+
+                        th4.setAttribute("scope", "row")
+                        th4.innerHTML = "Resolved On"
+
+                        td4.innerHTML = currData[1]["resolvedOn"]
+
+                        tr.appendChild(th)
+                        tr.appendChild(td)
+
+                        tr1.appendChild(th1)
+                        tr1.appendChild(td1)
+
+                        tr3.appendChild(th3)
+                        tr3.appendChild(td3)
+
+                        tr4.appendChild(th4)
+                        tr4.appendChild(td4)
+
+                        tableBody.appendChild(tr)
+                        tableBody.appendChild(tr1)
+                        tableBody.appendChild(tr3)
+                        tableBody.appendChild(tr4)
+
+                        for (var i = 1; i < count; i++) {
+                            for (var j = 0; j < 2; j++) {
+                                let tr = document.createElement("tr")
+                                let th = document.createElement("th")
+                                let th1 = document.createElement("th")
+                                let th2 = document.createElement("th")
+                                let td = document.createElement("td")
+                                if (j == 0) {
+                                    th1.setAttribute("scope", "row")
+                                    th1.setAttribute("rowspan", "5")
+                                    th1.setAttribute("class", "align-middle text-center")
+                                    th1.innerHTML = i + 1
+
+                                    th2.setAttribute("scope", "row")
+                                    th2.setAttribute("class", "align-middle")
+                                    th2.innerHTML = "FeedBack"
+
+                                    td.innerHTML = currData[i + 1]["feedback"]
+
+                                    tr.appendChild(th1)
+                                    tr.appendChild(th2)
+                                    tr.appendChild(td)
+
+                                    tableBody.appendChild(tr)
+                                }
+                                else {
+                                    //
+                                    let tr5 = document.createElement("tr")
+                                    let th5 = document.createElement("th")
+                                    let td5 = document.createElement("td")
+
+                                    th5.setAttribute("scope", "row")
+                                    th5.innerHTML = "Cuts"
+
+                                    td5.innerHTML = currData[i + 1]["cuts"]
+
+                                    let tr1 = document.createElement("tr")
+                                    let th6 = document.createElement("th")
+                                    let td1 = document.createElement("td")
+
+                                    th6.setAttribute("scope", "row")
+                                    th6.innerHTML = "Edits"
+
+                                    td1.innerHTML = currData[i + 1]["edits"]
+
+                                    let tr3 = document.createElement("tr")
+                                    let td3 = document.createElement("td")
+                                    let th3 = document.createElement("th")
+
+                                    th3.setAttribute("scope", "row")
+                                    th3.innerHTML = "Denied On"
+
+                                    td3.innerHTML = new Date(currData[i + 1]["timestamp"]).toUTCString()
+
+                                    let tr2 = document.createElement("tr")
+                                    let td2 = document.createElement("td")
+
+                                    let tr4 = document.createElement("tr")
+                                    let td4 = document.createElement("td")
+                                    let th4 = document.createElement("th")
+
+                                    th4.setAttribute("scope", "row")
+                                    th4.innerHTML = "Resolved On"
+
+                                    td4.innerHTML = new Date(currData[i + 1]["resolvedOn"]).toUTCString()
+
+                                    tr5.appendChild(th5)
+                                    tr5.appendChild(td5)
+
+                                    tr1.appendChild(th6)
+                                    tr1.appendChild(td1)
+
+                                    tr3.appendChild(th3)
+                                    tr3.appendChild(td3)
+
+                                    tr4.appendChild(th4)
+                                    tr4.appendChild(td4)
+
+                                    tableBody.appendChild(tr5)
+                                    tableBody.appendChild(tr1)
+                                    tableBody.appendChild(tr3)
+                                    tableBody.appendChild(tr4)
+                                }
+                            }
+                        }
+                        //
+                        let trDivider = document.createElement("tr")
+                        let tdDivider = document.createElement("td")
+                        trDivider.setAttribute("class", "table-danger")
+                        tdDivider.setAttribute("colspan", "4")
+                        trDivider.appendChild(tdDivider)
+                        tableBody.appendChild(trDivider)
+                    }
+                }
+                n++;
+            }
+            if (keys.length == 0) {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+
+        function generateRoughCutDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let table = document.createElement("table")
+            let tableHead = document.createElement("thead")
+            let tableBody = document.createElement("tbody")
+
+            table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+            let th1 = document.createElement("th")
+            let th2 = document.createElement("th")
+            let th3 = document.createElement("th")
+            let th4 = document.createElement("th")
+
+            th1.setAttribute("class", "text-center align-middle")
+            th1.setAttribute("style", "width: 100px;")
+            th1.setAttribute("scope", "row")
+            th1.innerText = "Topic"
+            th2.setAttribute("class", "text-center align-middle")
+            th2.setAttribute("style", "width: 20px;")
+            th2.setAttribute("scope", "row")
+            th2.innerText = "Count"
+            th3.setAttribute("class", "text-center align-middle")
+            th3.setAttribute("style", "width: 150px;")
+            th3.setAttribute("scope", "row")
+            th3.innerText = "Properties"
+            th4.setAttribute("class", "text-center align-middle")
+            th4.setAttribute("style", "width: 200px;")
+            th4.setAttribute("scope", "row")
+            th4.innerText = "Details"
+
+            tableHead.appendChild(th1)
+            tableHead.appendChild(th2)
+            tableHead.appendChild(th3)
+            tableHead.appendChild(th4)
+
+            table.appendChild(tableHead)
+            table.appendChild(tableBody)
+            display.appendChild(table)
+
+            let postTopicsHistory = globalData.postTopicsHistory
+            let keys = Object.keys(postTopicsHistory).sort()
+            let n = 0
+
+            while (n < keys.length) {
+                let currData = postTopicsHistory[keys[n]]
+                let count = parseInt(currData.count)
+                for (var i = 0; i < 2; i++) {
+                    let tr = document.createElement("tr")
+                    let th = document.createElement("th")
+                    let th1 = document.createElement("th")
+                    let th2 = document.createElement("th")
+                    let td = document.createElement("td")
+                    if (i == 0) {
+                        th.setAttribute("rowspan", 4 * count)
+                        th.setAttribute("class", "text-center align-middle")
+                        th.innerHTML = keys[n]
+
+                        th1.setAttribute("scope", "row")
+                        th1.setAttribute("rowspan", "4")
+                        th1.setAttribute("class", "align-middle text-center")
+                        th1.innerHTML = "1"
+
+                        th2.setAttribute("scope", "row")
+                        th2.setAttribute("class", "align-middle")
+                        th2.innerHTML = "Video Link"
+
+                        td.innerHTML = currData[1]["videoLink"]
+
+                        tr.appendChild(th)
+                        tr.appendChild(th1)
+                        tr.appendChild(th2)
+                        tr.appendChild(td)
+
+                        tableBody.appendChild(tr)
+                    }
+                    else {
+                        th.setAttribute("scope", "row")
+                        th.innerHTML = "Path"
+
+                        td.innerHTML = currData[1]["path"]
+
+                        let tr1 = document.createElement("tr")
+                        let td1 = document.createElement("td")
+
+                        th1.setAttribute("scope", "row")
+                        th1.innerHTML = "Duration"
+
+                        td1.innerHTML = currData[1]["duration"]
+
+                        let tr3 = document.createElement("tr")
+                        let td3 = document.createElement("td")
+                        let th3 = document.createElement("th")
+
+                        th3.setAttribute("scope", "row")
+                        th3.innerHTML = "Timestamp"
+
+                        td3.innerHTML = new Date(currData[1]["timestamp"]).toUTCString()
+
+                        tr.appendChild(th)
+                        tr.appendChild(td)
+
+                        tr1.appendChild(th1)
+                        tr1.appendChild(td1)
+
+                        tr3.appendChild(th3)
+                        tr3.appendChild(td3)
+
+                        tableBody.appendChild(tr)
+                        tableBody.appendChild(tr1)
+                        tableBody.appendChild(tr3)
+
+                        for (var i = 1; i < count; i++) {
+                            for (var j = 0; j < 2; j++) {
+                                let tr = document.createElement("tr")
+                                let th = document.createElement("th")
+                                let th1 = document.createElement("th")
+                                let th2 = document.createElement("th")
+                                let td = document.createElement("td")
+                                if (j == 0) {
+                                    th1.setAttribute("scope", "row")
+                                    th1.setAttribute("rowspan", "4")
+                                    th1.setAttribute("class", "align-middle text-center")
+                                    th1.innerHTML = i + 1
+
+                                    th2.setAttribute("scope", "row")
+                                    th2.setAttribute("class", "align-middle")
+                                    th2.innerHTML = "Video Link"
+
+                                    td.innerHTML = currData[i + 1]["videoLink"]
+
+                                    tr.appendChild(th1)
+                                    tr.appendChild(th2)
+                                    tr.appendChild(td)
+
+                                    tableBody.appendChild(tr)
+                                }
+                                else {
+                                    //
+                                    let tr5 = document.createElement("tr")
+                                    let th5 = document.createElement("th")
+                                    let td5 = document.createElement("td")
+
+                                    th5.setAttribute("scope", "row")
+                                    th5.innerHTML = "Path"
+
+                                    td5.innerHTML = currData[i + 1]["postPath"]
+
+                                    let tr1 = document.createElement("tr")
+                                    let th6 = document.createElement("th")
+                                    let td1 = document.createElement("td")
+
+                                    th6.setAttribute("scope", "row")
+                                    th6.innerHTML = "Duration"
+
+                                    td1.innerHTML = currData[i + 1]["duration"]
+
+                                    let tr3 = document.createElement("tr")
+                                    let td3 = document.createElement("td")
+                                    let th3 = document.createElement("th")
+
+                                    th3.setAttribute("scope", "row")
+                                    th3.innerHTML = "Timestamp"
+
+                                    td3.innerHTML = new Date(currData[i + 1]["timestamp"]).toUTCString()
+
+                                    tr5.appendChild(th5)
+                                    tr5.appendChild(td5)
+
+                                    tr1.appendChild(th6)
+                                    tr1.appendChild(td1)
+
+                                    tr3.appendChild(th3)
+                                    tr3.appendChild(td3)
+
+                                    tableBody.appendChild(tr5)
+                                    tableBody.appendChild(tr1)
+                                    tableBody.appendChild(tr3)
+                                }
+                            }
+                        }
+                        //
+                        let trDivider = document.createElement("tr")
+                        let tdDivider = document.createElement("td")
+                        trDivider.setAttribute("class", "table-danger")
+                        tdDivider.setAttribute("colspan", "4")
+                        trDivider.appendChild(tdDivider)
+                        tableBody.appendChild(trDivider)
+                    }
+                }
+                n++;
+            }
+            if (keys.length == 0) {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+
+        function generateReshootDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let table = document.createElement("table")
+            let tableHead = document.createElement("thead")
+            let tableBody = document.createElement("tbody")
+
+            table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+            let th1 = document.createElement("th")
+            let th2 = document.createElement("th")
+            let th3 = document.createElement("th")
+
+            th1.setAttribute("class", "text-center align-middle")
+            th1.setAttribute("style", "width: 100px;")
+            th1.setAttribute("scope", "row")
+            th1.innerText = "Topic"
+            th2.setAttribute("class", "text-center align-middle")
+            th2.setAttribute("style", "width: 150px;")
+            th2.setAttribute("scope", "row")
+            th2.innerText = "Properties"
+            th3.setAttribute("class", "text-center align-middle")
+            th3.setAttribute("style", "width: 200px;")
+            th3.setAttribute("scope", "row")
+            th3.innerText = "Details"
+
+            tableHead.appendChild(th1)
+            tableHead.appendChild(th2)
+            tableHead.appendChild(th3)
+
+            table.appendChild(tableHead)
+            table.appendChild(tableBody)
+            display.appendChild(table)
+
+            let reshoots = globalData.reshoots
+            let keys = Object.keys(reshoots).sort()
+            let n = 0
+
+            while (n < keys.length) {
+                for (var i = 0; i < 2; i++) {
+                    let currData = reshoots[keys[n]]
+                    let tr = document.createElement("tr")
+                    let th = document.createElement("th")
+                    let th1 = document.createElement("th")
+                    let td = document.createElement("td")
+                    let str = ""
+                    if (i == 0) {
+
+                        th.setAttribute("rowspan", "8")
+                        th.setAttribute("class", "text-center align-middle")
+                        th.innerHTML = keys[n]
+
+                        th1.setAttribute("scope", "row")
+                        th1.setAttribute("class", "align-middle")
+                        th1.innerHTML = "Topics"
+
+                        for (var x = 0; x < currData["topics"].length; x++) {
+                            str = str + currData["topics"][x] + "<br>"
+                        }
+
+                        td.innerHTML = str
+
+                        tr.appendChild(th)
+                        tr.appendChild(th1)
+                        tr.appendChild(td)
+
+                        tableBody.appendChild(tr)
+                    }
+                    else {
+                        th.setAttribute("scope", "row")
+                        th.innerHTML = "Paths"
+
+                        str = ""
+                        for (var x = 0; x < currData["paths"].length; x++) {
+                            str = str + currData["paths"][x] + "<br>"
+                        }
+
+                        td.innerHTML = str
+
+                        let tr1 = document.createElement("tr")
+                        let td1 = document.createElement("td")
+
+                        th1.setAttribute("scope", "row")
+                        th1.innerHTML = "Producer Remarks"
+
+                        td1.innerHTML = currData["preRemarks"]
+
+                        let tr3 = document.createElement("tr")
+                        let td3 = document.createElement("td")
+                        let th3 = document.createElement("th")
+
+                        th3.setAttribute("scope", "row")
+                        th3.innerHTML = "Duration"
+
+                        td3.innerHTML = currData["minutesRecorded"] + "m " + currData["secondsRecorded"] + "s"
+                        //
+                        let tr4 = document.createElement("tr")
+                        let td4 = document.createElement("td")
+                        let th4 = document.createElement("th")
+
+                        th4.setAttribute("scope", "row")
+                        th4.innerHTML = "No of Videos Recorded"
+
+                        td4.innerHTML = currData["noOfVideosRecorded"]
+
+                        let tr5 = document.createElement("tr")
+                        let td5 = document.createElement("td")
+                        let th5 = document.createElement("th")
+
+                        th5.setAttribute("scope", "row")
+                        th5.innerHTML = "Reshoot Reason"
+
+                        td5.innerHTML = currData["reshootRemarks"]
+
+                        let tr6 = document.createElement("tr")
+                        let td6 = document.createElement("td")
+                        let th6 = document.createElement("th")
+
+                        th6.setAttribute("scope", "row")
+                        th6.innerHTML = "Timestamp"
+
+                        let date = new Date(currData["preProductionLastEdited"])
+                        td6.innerHTML = date.toUTCString()
+
+                        let tr7 = document.createElement("tr")
+                        let td7 = document.createElement("td")
+                        let th7 = document.createElement("th")
+
+                        th7.setAttribute("scope", "row")
+                        th7.innerHTML = "Reshoot Asked on"
+
+                        td7.innerHTML = new Date(currData["reshootAsked"]).toUTCString()
+
+                        let tr2 = document.createElement("tr")
+                        let td2 = document.createElement("td")
+
+                        tr2.setAttribute("class", "table-danger")
+                        td2.setAttribute("colspan", "3")
+
+                        tr.appendChild(th)
+                        tr.appendChild(td)
+
+                        tr1.appendChild(th1)
+                        tr1.appendChild(td1)
+
+                        tr3.appendChild(th3)
+                        tr3.appendChild(td3)
+
+                        tr4.appendChild(th4)
+                        tr4.appendChild(td4)
+
+                        tr5.appendChild(th5)
+                        tr5.appendChild(td5)
+
+                        tr6.appendChild(th6)
+                        tr6.appendChild(td6)
+
+                        tr7.appendChild(th7)
+                        tr7.appendChild(td7)
+
+                        tr2.appendChild(td2)
+
+                        tableBody.appendChild(tr)
+                        tableBody.appendChild(tr1)
+                        tableBody.appendChild(tr3)
+                        tableBody.appendChild(tr4)
+                        tableBody.appendChild(tr5)
+                        tableBody.appendChild(tr6)
+                        tableBody.appendChild(tr7)
+                        tableBody.appendChild(tr2)
+                    }
+                }
+                n++;
+            }
+            if (keys.length == 0) {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+
+        function generateReshootHistoryDetails() {
+            let addMessage = document.getElementById("addMessage")
+            addMessage.classList.add("hide")
+            let display = document.getElementById("tableSection")
+            display.innerHTML = ""
+
+            let table = document.createElement("table")
+            let tableHead = document.createElement("thead")
+            let tableBody = document.createElement("tbody")
+
+            table.setAttribute("class", "table table-sm table-bordered table-striped")
+
+            let th1 = document.createElement("th")
+            let th2 = document.createElement("th")
+            let th3 = document.createElement("th")
+
+            th1.setAttribute("class", "text-center align-middle")
+            th1.setAttribute("style", "width: 100px;")
+            th1.setAttribute("scope", "row")
+            th1.innerText = "Topic"
+            th2.setAttribute("class", "text-center align-middle")
+            th2.setAttribute("style", "width: 150px;")
+            th2.setAttribute("scope", "row")
+            th2.innerText = "Properties"
+            th3.setAttribute("class", "text-center align-middle")
+            th3.setAttribute("style", "width: 200px;")
+            th3.setAttribute("scope", "row")
+            th3.innerText = "Details"
+
+            tableHead.appendChild(th1)
+            tableHead.appendChild(th2)
+            tableHead.appendChild(th3)
+
+            table.appendChild(tableHead)
+            table.appendChild(tableBody)
+            display.appendChild(table)
+
+            let reshoots = globalData.reshootHistory
+            let keys = Object.keys(reshoots).sort()
+            let n = 0
+
+            while (n < keys.length) {
+                for (var i = 0; i < 2; i++) {
+                    let currData = reshoots[keys[n]]
+                    let tr = document.createElement("tr")
+                    let th = document.createElement("th")
+                    let th1 = document.createElement("th")
+                    let td = document.createElement("td")
+                    let str = ""
+                    if (i == 0) {
+
+                        th.setAttribute("rowspan", "9")
+                        th.setAttribute("class", "text-center align-middle")
+                        th.innerHTML = keys[n]
+
+                        th1.setAttribute("scope", "row")
+                        th1.setAttribute("class", "align-middle")
+                        th1.innerHTML = "Topics"
+
+                        for (var x = 0; x < currData["topics"].length; x++) {
+                            str = str + currData["topics"][x] + "<br>"
+                        }
+
+                        td.innerHTML = str
+
+                        tr.appendChild(th)
+                        tr.appendChild(th1)
+                        tr.appendChild(td)
+
+                        tableBody.appendChild(tr)
+                    }
+                    else {
+                        th.setAttribute("scope", "row")
+                        th.innerHTML = "Paths"
+
+                        str = ""
+                        for (var x = 0; x < currData["paths"].length; x++) {
+                            str = str + currData["paths"][x] + "<br>"
+                        }
+
+                        td.innerHTML = str
+
+                        let tr1 = document.createElement("tr")
+                        let td1 = document.createElement("td")
+
+                        th1.setAttribute("scope", "row")
+                        th1.innerHTML = "Producer Remarks"
+
+                        td1.innerHTML = currData["preRemarks"]
+
+                        let tr3 = document.createElement("tr")
+                        let td3 = document.createElement("td")
+                        let th3 = document.createElement("th")
+
+                        th3.setAttribute("scope", "row")
+                        th3.innerHTML = "Duration"
+
+                        td3.innerHTML = currData["minutesRecorded"] + "m " + currData["secondsRecorded"] + "s"
+                        //
+                        let tr4 = document.createElement("tr")
+                        let td4 = document.createElement("td")
+                        let th4 = document.createElement("th")
+
+                        th4.setAttribute("scope", "row")
+                        th4.innerHTML = "No of Videos Recorded"
+
+                        td4.innerHTML = currData["noOfVideosRecorded"]
+
+                        let tr5 = document.createElement("tr")
+                        let td5 = document.createElement("td")
+                        let th5 = document.createElement("th")
+
+                        th5.setAttribute("scope", "row")
+                        th5.innerHTML = "Reshoot Reason"
+
+                        td5.innerHTML = currData["reshootRemarks"]
+
+                        let tr6 = document.createElement("tr")
+                        let td6 = document.createElement("td")
+                        let th6 = document.createElement("th")
+
+                        th6.setAttribute("scope", "row")
+                        th6.innerHTML = "Timestamp"
+
+                        let date = new Date(currData["preProductionLastEdited"])
+                        td6.innerHTML = date.toUTCString()
+
+                        let tr7 = document.createElement("tr")
+                        let td7 = document.createElement("td")
+                        let th7 = document.createElement("th")
+
+                        th7.setAttribute("scope", "row")
+                        th7.innerHTML = "Reshoot Asked on"
+
+                        td7.innerHTML = new Date(currData["reshootAsked"]).toUTCString()
+
+                        let tr8 = document.createElement("tr")
+                        let td8 = document.createElement("td")
+                        let th8 = document.createElement("th")
+
+                        th8.setAttribute("scope", "row")
+                        th8.innerHTML = "Resolved On"
+
+                        td8.innerHTML = new Date(currData["resolvedOn"]).toUTCString()
+
+                        let tr2 = document.createElement("tr")
+                        let td2 = document.createElement("td")
+
+                        tr2.setAttribute("class", "table-danger")
+                        td2.setAttribute("colspan", "3")
+
+                        tr.appendChild(th)
+                        tr.appendChild(td)
+
+                        tr1.appendChild(th1)
+                        tr1.appendChild(td1)
+
+                        tr3.appendChild(th3)
+                        tr3.appendChild(td3)
+
+                        tr4.appendChild(th4)
+                        tr4.appendChild(td4)
+
+                        tr5.appendChild(th5)
+                        tr5.appendChild(td5)
+
+                        tr6.appendChild(th6)
+                        tr6.appendChild(td6)
+
+                        tr7.appendChild(th7)
+                        tr7.appendChild(td7)
+
+                        tr8.appendChild(th8)
+                        tr8.appendChild(td8)
+
+                        tr2.appendChild(td2)
+
+                        tableBody.appendChild(tr)
+                        tableBody.appendChild(tr1)
+                        tableBody.appendChild(tr3)
+                        tableBody.appendChild(tr4)
+                        tableBody.appendChild(tr5)
+                        tableBody.appendChild(tr6)
+                        tableBody.appendChild(tr7)
+                        tableBody.appendChild(tr8)
+                        tableBody.appendChild(tr2)
+                    }
+                }
+                n++;
+            }
+            if (keys.length == 0) {
+                let addMessage = document.getElementById("addMessage")
+                addMessage.classList.remove("hide")
+            }
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

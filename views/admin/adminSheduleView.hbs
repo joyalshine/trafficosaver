@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/styleAdminSheduleView.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="overlay" onclick="off()"></div>
+    <header class="text-center" id="preProductionHomeHeader">
+        <div class="">
+            <img src="https://vit.ac.in/files/gravitas19/images/vit_white.png" id="preProductionHomeLogo" alt="">
+        </div>
+        <div class="topright">
+            <a href="" style="text-decoration: none; color:#fff">
+                <img src="https://cdn-icons-png.flaticon.com/128/3237/3237472.png" width="40" height="40" alt="">
+                {{user.facultyName}}
+            </a>
+        </div>
+    </header>
+    <div class="containerMain">
+        <a href="#" class="toggleBox">
+            <span class="icon"></span>
+        </a>
+        <ul class="navItems">
+            <li>
+                <a href="/admin-home">
+                    <i class="fa fa-home" style="--i:1"></i>
+                    <span style="--g:1">home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/course-add-form">
+                    <i class="fa fa-user" style="--i:2"></i>
+                    <span style="--g:2">Add course</span>
+                </a>
+            </li>
+            <li>
+                <a href="/reports-view">
+                    <i class="fa fa-folder" style="--i:3"></i>
+                    <span style="--g:3">reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-password-change">
+                    <i class="fa-solid fa-file-circle-check" style="--i:4"></i>
+                    <span style="--g:4">Database management</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-view">
+                    <i class="fa-solid fa-calendar-days" style="--i:5"></i>
+                    <span style="--g:5">shedule</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-shedule-booking">
+                    <i class="fa-solid fa-calendar-days" style="--i:6"></i>
+                    <span style="--g:6">shedule Booking</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fa fa-globe" style="--i:7"></i>
+                    <span style="--g:7">logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <section class="menuDiv row">
+            <div class="col-md-4">
+                <select class="form-select m-1" name="studioName" id="idStudioName">
+                    <option value="" selected>Select Studio...</option>
+                    <option value="mainStudio">Main Studio</option>
+                    <option value="virtualStudio">Virtual Studio</option>
+                    <option value="vgbStudio">VGB Studio</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary m-1" id="generateSheduleBtn"
+                    onclick="generateShedule()">Generate</button>
+            </div>
+        </section>
+        <section id="sheduleSection" class="table-responsive-lg mt-4 hide mb-5" style="">
+            <table class="table  table-bordered table-striped text-center">
+                <thead>
+                    <th>Day</th>
+                    <th>9:00 to 10:15</th>
+                    <th>10:15 to 11:30</th>
+                    <th>11:45 to 1:00</th>
+                    <th>2:00 to 3:15</th>
+                    <th>3:15 to 4:30</th>
+                    <th>4:45 to 6:00</th>
+                </thead>
+                <tbody id="tableBody">
+
+                </tbody>
+            </table>
+        </section>
+
+        <section id="bookingDeleteSection" class="hide conatiner text-center">
+            <div class="row" style="display: flex;justify-content: center; margin-bottom: 100px;">
+                <div class="col-lg-2 col-md-5 col-6" id="card">
+                    <h6 id="selectedStudioName">{{this.studio}}</h6>
+                </div>
+                <div class="col-lg-2 col-md-5 col-6" id="card">
+                    <h6 id="selectedFaculty">{{this.slot}}</h6>
+                </div>
+                <div class="col-lg-2 col-md-5 col-6" id="card">
+                    <h6 id="selectedDay">{{this.day}}</h6>
+                </div>
+                <div class="col-lg-2 col-md-5 col-6" id="card">
+                    <h6 id="selectedSlot">{{this.slot}}</h6>
+                </div>
+                <div class="col-lg-1 col-md-5 col-12" id="cardButton">
+                    <button type="button" class="btn  btn-danger" id="selectedButton"><i
+                            class="fa-sharp fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+        crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var toggleClick = document.querySelector(".toggleBox");
+        var containerMain = document.querySelector(".containerMain");
+        var overlayScreen = document.querySelector(".overlay");
+
+        toggleClick.addEventListener('click', () => {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        });
+
+        function off() {
+            toggleClick.classList.toggle('active');
+            overlayScreen.classList.toggle('active');
+            containerMain.classList.toggle('active');
+        }
+
+        function generateShedule() {
+            let studioName = document.getElementById("idStudioName").value
+            if (studioName == "") {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Select a Studio',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+            else {
+                let tableBody = document.getElementById("tableBody")
+                tableBody.innerHTML = ""
+                fetch("/admin-shedule-view", {
+                    headers: { 'Content-Type': "application/json" },
+                    method: "POST",
+                    body: JSON.stringify({ studioName: studioName, flag: true }),
+                }).then(res => res.json()).then(response => {
+                    let display = document.getElementById("sheduleSection")
+                    display.classList.remove("hide")
+                    let data = response.response.shedule
+                    let slots = ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6", "slot7"]
+                    let days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
+                    let displayDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+                    let displayStudioNames = { "mainStudio": "Main Studio", "virtualStudio": "Virtual Studio", "vgbStudio": "VGB Studio" }
+                    let timeSlots = ["9:00 AM - 10:15 AM", "10:15 AM - 11:30 AM", "11:45 AM - 1:00 PM", "2:00 PM - 3:15 PM", "3:15 PM - 4:30 PM", "4:45 PM - 6:00 PM"]
+                    let n = 0
+
+                    while (n < 5) {
+                        let day = days[n]
+                        let dayData = data[day]
+                        let tr = document.createElement("tr")
+
+                        let th = document.createElement("th")
+                        th.innerHTML = displayDays[n]
+                        tr.appendChild(th)
+                        for (var i = 0; i < 6; i++) {
+                            if (dayData[slots[i]] != "") {
+                                let value = ""
+                                if (dayData[slots[i]].split("$")[0] == "RESERVED") {
+                                    value = displayDays[n] + "_" + timeSlots[i] + "_" + displayStudioNames[studioName] + "_" + dayData[slots[i]].split("$")[0] + "_" + day + "_" + studioName + "_" + slots[i] + "_" + dayData[slots[i]].split("$")[1] + "_" + dayData[slots[i]].split("$")[2] + "_" + dayData[slots[i]].split("$")[3] + "_" + dayData[slots[i]].split("$")[4]
+                                }
+                                else {
+                                    value = displayDays[n] + "_" + timeSlots[i] + "_" + displayStudioNames[studioName] + "_" + dayData[slots[i]].split("-")[0] + "_" + day + "_" + studioName + "_" + slots[i] + "_" + dayData[slots[i]].split("-")[1]
+                                }
+                                let td = document.createElement("td")
+                                let span = document.createElement("span")
+                                let div = document.createElement('div')
+
+                                span.setAttribute("class", "spanShedule")
+                                span.setAttribute("data-value", value)
+                                span.setAttribute("onclick", "showBooking(this)")
+                                div.setAttribute("class", "divShedule align-middle")
+                                div.setAttribute("id", value)
+                                if (dayData[slots[i]].split("$")[0] == "RESERVED") {
+                                    div.innerHTML = dayData[slots[i]].split("$")[0] + "<br>" + dayData[slots[i]].split("$")[1]
+                                }
+                                else {
+                                    div.innerHTML = dayData[slots[i]].split("-")[0]
+                                }
+
+                                span.appendChild(div)
+                                td.appendChild(span)
+
+                                tr.appendChild(td)
+                            }
+                            else {
+                                let td = document.createElement("td")
+                                td.innerHTML = "-"
+                                tr.appendChild(td)
+                            }
+                        }
+                        tableBody.appendChild(tr)
+                        n++
+                    }
+                })
+            }
+        }
+
+        function showBooking(element) {
+            let dataArray = element.getAttribute("data-value").split("_")
+            let selectedSheduleDisplay = document.getElementById("bookingDeleteSection")
+            let selectedStudioName = document.getElementById("selectedStudioName")
+            let selectedDay = document.getElementById("selectedDay")
+            let selectedSlot = document.getElementById("selectedSlot")
+            let selectedFaculty = document.getElementById("selectedFaculty")
+            let selectedButton = document.getElementById("selectedButton")
+
+            if (dataArray.length == 11) {
+                selectedStudioName.innerHTML = dataArray[2]
+                selectedFaculty.innerHTML = dataArray[3]
+                selectedDay.innerHTML = dataArray[9]
+                selectedSlot.innerHTML = dataArray[7]
+                selectedButton.setAttribute("onclick", "unBook('" + element.getAttribute("data-value") + "')")
+                selectedSheduleDisplay.classList.remove("hide")
+            }
+            else {
+                selectedStudioName.innerHTML = dataArray[2]
+                selectedFaculty.innerHTML = dataArray[3]
+                selectedDay.innerHTML = dataArray[0]
+                selectedSlot.innerHTML = dataArray[1]
+                selectedButton.setAttribute("onclick", "unBook('" + element.getAttribute("data-value") + "')")
+                selectedSheduleDisplay.classList.remove("hide")
+            }
+        }
+
+
+        async function unBook(key) {
+            let dataList = key.split("_")
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger m-2',
+                    denyButton: 'btn btn-success  m-3'
+                },
+                buttonsStyling: false
+            })
+
+            if (dataList[3] != "RESERVED") {
+                swalWithBootstrapButtons.fire({
+                    title: 'Type of Cancellation?',
+                    text: "select the type of cancellation",
+                    icon: 'warning',
+                    confirmButtonText: 'Only for today',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    denyButtonText: `Permanent`,
+                    cancelButtonText: 'cancel'
+                }).then(async (cancellationType) => {
+                    if (cancellationType.isDenied || cancellationType.isConfirmed) {
+                        const text = await Swal.fire({
+                            input: 'textarea',
+                            inputLabel: 'Message',
+                            inputPlaceholder: 'Type the reason here...',
+                            inputAttributes: {
+                                'aria-label': 'Type your reason here'
+                            },
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'You need to type Reason!'
+                                }
+                            },
+                            allowOutsideClick: false,
+                            showCancelButton: true
+                        }).then((reason) => {
+                            if (reason.isConfirmed) {
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Are you sure?',
+                                    text: "You won't be able to revert this!",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes, delete it!',
+                                    cancelButtonText: 'No, cancel!',
+                                    reverseButtons: true
+                                }).then((result) => {
+                                    let cancelType = ""
+                                    if (result.isConfirmed) {
+                                        if (cancellationType.isConfirmed) {
+                                            cancelType = "temp"
+                                        }
+                                        else {
+                                            cancelType = "permanent"
+                                        }
+                                        fetch("/admin-shedule-booking", {
+                                            headers: { 'Content-Type': "application/json" },
+                                            method: "POST",
+                                            body: JSON.stringify({ flag: "4", cancelType: cancelType, day: dataList[4], studio: dataList[5], timeSlot: dataList[6], reason: reason.value, facultyId: dataList[7], detailSlot: dataList[1], facultyName: dataList[3], detailStudio: dataList[2], detailDay: dataList[0] }),
+                                        }).then(res => res.json()).then(data => {
+                                            swalWithBootstrapButtons.fire(
+                                                'Cancelled!',
+                                                'The Slot has been released.',
+                                                'success'
+                                            ).then((a) => {
+                                                let selectedSheduleDisplay = document.getElementById("bookingDeleteSection")
+                                                selectedSheduleDisplay.classList.add("hide")
+                                                generateShedule()
+                                            })
+                                        });
+                                    }
+                                    else if (result.dismiss === Swal.DismissReason.cancel) {
+                                        swalWithBootstrapButtons.fire(
+                                            'Cancelled Failed',
+                                            'The Slot is not cancelled',
+                                            'error'
+                                        )
+                                    }
+                                })
+                            }
+                            else {
+                                swalWithBootstrapButtons.fire(
+                                    'Cancellation Failed',
+                                    'The Slot is not cancelled',
+                                    'error'
+                                )
+                            }
+                        })
+                    }
+                    else {
+                        swalWithBootstrapButtons.fire(
+                            'Cancellation Failed',
+                            'The Slot is not cancelled',
+                            'error'
+                        )
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    input: 'textarea',
+                    inputLabel: 'Remarks',
+                    inputPlaceholder: 'Type your remarks here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your remarks here'
+                    },
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to type Reason!'
+                        }
+                    },
+                    showCancelButton: true
+                }).then((remarks) => {
+                    if (remarks.isConfirmed) {
+                        swalWithBootstrapButtons.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, delete it!',
+                            cancelButtonText: 'No, cancel!',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch("/admin-shedule-booking", {
+                                    headers: { 'Content-Type': "application/json" },
+                                    method: "POST",
+                                    body: JSON.stringify({ flag: "6", day: dataList[4], studio: dataList[5], timeSlot: dataList[6], detailSlot: dataList[1], detailStudio: dataList[2], detailDay: dataList[0], reason: dataList[7], reservedBy: dataList[8], remarks: remarks.value, date: dataList[10], organization: dataList[9] }),
+                                }).then(res => res.json()).then(data => {
+                                    if (data.status) {
+                                        swalWithBootstrapButtons.fire(
+                                            'Cancelled!',
+                                            'The Slot has been released.',
+                                            'success'
+                                        ).then((a) => {
+                                            let selectedSheduleDisplay = document.getElementById("bookingDeleteSection")
+                                            selectedSheduleDisplay.classList.add("hide")
+                                            generateShedule()
+                                        })
+                                    }
+                                    else {
+                                        Swal.fire({
+                                            title: 'Something went wrong',
+                                            icon: 'error',
+                                            showConfirmButton: true
+                                        })
+                                    }
+                                });
+                            }
+                            else if (result.dismiss === Swal.DismissReason.cancel) {
+                                swalWithBootstrapButtons.fire(
+                                    'Cancelled Failed',
+                                    'The Slot is not cancelled',
+                                    'error'
+                                )
+                            }
+                        })
+                    }
+                })
+            }
+        }
+    </script>
+</body>
+
+</html>

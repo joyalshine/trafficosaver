@@ -1,0 +1,249 @@
+body {
+    /*background:linear-gradient(45deg,#242F36,#161d2c) ;*/
+    background-color: #e5e5e5;
+  }
+  .overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.848); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+  }
+  .containerMain {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    bottom: 100px;
+    height: 50px;
+    width: 50px;
+    /*background-color: #fff ;*/
+    border-radius: 50px;
+    transition: 0.4s ease;
+    z-index: 2;
+  }
+  .containerMain.active {
+    background-color: #ffffff;
+    height: 350px;
+  }
+  .overlay.active {
+    display: block;
+  }
+  .toggleBox {
+    position: relative;
+    display: block;
+    height: 70px;
+    width: 70px;
+    border-radius: 50px;
+  } /*#161d2c*/
+  .icon {
+    position: absolute;
+    height: 4px;
+    width: 25px;
+    top: 38%;
+    left: 37%;
+    transform: translate(-50%, -50%);
+    background-color: #20df7f;
+    border-radius: 50px;
+  }
+  .toggleBox.active .icon {
+    width: 0;
+  }
+  .icon::before,
+  .icon::after {
+    position: absolute;
+    content: "";
+    height: 4px;
+    width: 25px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #20df7f;
+    border-radius: 50px;
+    transition: 0.3s;
+  }
+  .icon::before {
+    top: 12px;
+  }
+  .icon::after {
+    bottom: 8px;
+  }
+  .toggleBox.active .icon::before {
+    width: 35px;
+    transform-origin: right;
+    transform: translate(-23px, 4px) rotate(45deg);
+  }
+  .toggleBox.active .icon::after {
+    width: 35px;
+    transform-origin: right;
+    transform: translate(-23px, -1px) rotate(-45deg);
+  }
+  .navItems {
+    width: 100%;
+    visibility: hidden;
+  }
+  .containerMain.active .navItems {
+    visibility: visible;
+  }
+  li {
+    list-style: none;
+  }
+  li a {
+    text-transform: uppercase;
+    color: #161d2c;
+  }
+  li a i {
+    position: relative;
+    display: flex;
+    font-size: 18px;
+    padding: 15px 0;
+    width: 100%;
+    right: 15px;
+    transform: scale(0);
+  }
+  
+  .containerMain.active .navItems li a i {
+    transform: scale(1);
+    transition: 0.4s ease;
+    transition-delay: calc(0.08s * var(--i));
+  }
+  .containerMain.active .navItems li:hover a i {
+    transition: 0.2s ease;
+    color: #26d07c;
+  }
+  li a span {
+    width: 170px;
+    position: absolute;
+    color: #fff;
+    margin: 10px 0;
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+  .containerMain.active .navItems li a span {
+    transform: translateX(15px);
+    transition: 0.4s ease;
+    transition-delay: calc(0.08s * var(--g));
+  }
+  .containerMain.active .navItems li:hover a span {
+    transform: translateX(30px);
+    transition: 0.2s ease;
+    color: #26d07c;
+  }
+  
+  #preProductionHomeHeader {
+    position: absolute;
+    width: 100vw;
+    background-color: #627c86;
+    height: 60px;
+    padding-left: 5px;
+  }
+  #preProductionHomeLogo {
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))
+      drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))
+      drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    width: 140px;
+    height: 47.55px;
+  }
+  
+  #tableSection {
+    position: relative;
+    top: 40px;
+    margin-bottom: 100px;
+  }
+  
+  #tableSection1 {
+    position: relative;
+    top: 40px;
+  }
+  
+  #deniedTableSection {
+    position: relative;
+    top: 20px;
+  }
+  
+  .table-hover tbody tr:hover td,
+  .table-hover tbody tr:hover th {
+    background-color: #bbf8f2;
+  }
+  
+  .auto-index {
+    counter-reset: serial; /* Set the serial number counter to 0 */
+  }
+  
+  .auto-index td:first-child:before {
+    counter-increment: serial; /* Increment the Serial counter */
+    content: counter(serial); /* Display the counter */
+  }
+  .topright {
+    position: absolute;
+    top: 7px;
+    right: 22px;
+    font-weight: bold;
+  }
+  #copyright {
+    position: absolute;
+    bottom: 6px;
+    right: 22px;
+    color: #8a8a8a;
+  }
+  .hide {
+    visibility: hidden;
+  }
+  .menuDiv {
+    padding: 2rem;
+    position: relative;
+    top: 80px;
+  }
+  
+  @media (min-width: 768px) {
+    tr {
+      font-size: 15px;
+    }
+    td {
+      font-size: 14px;
+    }
+  }
+  
+  @media (min-width: 991px) {
+    tr {
+      font-size: 16px;
+    }
+    td {
+      font-size: 15px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    tr {
+      font-size: 17px;
+    }
+    td {
+      font-size: 16px;
+    }
+  }
+  @media (min-width: 1700px) {
+    tr {
+      font-size: 19px;
+    }
+    td {
+      font-size: 18px;
+    }
+    #idCourseInfo{
+      font-size: 20px;
+    }
+    #idRecordedDate{
+      font-size: 20px;
+    }
+  }
+  @media (min-width: 2000px) {
+    tr {
+      font-size: 20px;
+    }
+    td {
+      font-size: 19px;
+    }
+  }
